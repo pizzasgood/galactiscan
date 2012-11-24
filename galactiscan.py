@@ -8,10 +8,13 @@ import sys
 
 import Survey
 import data
+import gui
 
 def usage(ret = 0):
     print """galactiscan [-h|--help] <options> [file1 [file2..]]
-If no options are given, load the files into the database
+If neither options nor file parameters are given, open the gui.
+Otherwise, if no options are given, load the files into the database
+
 Options:
     --help                  shows this message
     --clear-db              deletes the database
@@ -85,12 +88,14 @@ if len(sys.argv) > 1:
             usage(1)
         i+=1
 
+    #add any files that were specified
+    if len(files) > 0:
+        add_files(files)
+
 else:
-    usage()
+    gui.main()
 
 
-if len(files) > 0:
-    add_files(files)
 
 
 
