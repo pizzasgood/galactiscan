@@ -192,27 +192,7 @@ def find_resources_by_mintl(mintl):
     return(rows)
 
 
-def find_resources_by_name(name):
-    name = "%%%s%%" % name
-    con = get_con()
-    cur = con.cursor()
-    cur.execute("""SELECT resources.name,
-                          resources.tl,
-                          resources.quality,
-                          resources.prevalence,
-                          bodies.body_kind,
-                          surveys.system_name,
-                          bodies.name
-                   FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   WHERE resources.name like ?
-                   ORDER BY resources.name ASC, resources.quality DESC
-                   """, (name,))
-    rows = cur.fetchall()
-    con.close()
-    return(rows)
-
-
-def find_resources_by_name_and_mintl(name,mintl):
+def find_resources_by_name(name,mintl):
     if mintl == None or mintl == '':
         mintl = 0
     name = "%%%s%%" % name
@@ -234,27 +214,7 @@ def find_resources_by_name_and_mintl(name,mintl):
     return(rows)
 
 
-def find_resources_by_planet(name):
-    name = "%%%s%%" % name
-    con = get_con()
-    cur = con.cursor()
-    cur.execute("""SELECT resources.name,
-                          resources.tl,
-                          resources.quality,
-                          resources.prevalence,
-                          bodies.body_kind,
-                          surveys.system_name,
-                          bodies.name
-                   FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   WHERE bodies.name like ?
-                   ORDER BY bodies.name ASC, resources.quality DESC, resources.name ASC
-                   """, (name,))
-    rows = cur.fetchall()
-    con.close()
-    return(rows)
-
-
-def find_resources_by_planet_and_mintl(name,mintl):
+def find_resources_by_planet(name,mintl):
     if mintl == None or mintl == '':
         mintl = 0
     name = "%%%s%%" % name
@@ -276,27 +236,7 @@ def find_resources_by_planet_and_mintl(name,mintl):
     return(rows)
 
 
-def find_resources_by_system(name):
-    name = "%%%s%%" % name
-    con = get_con()
-    cur = con.cursor()
-    cur.execute("""SELECT resources.name,
-                          resources.tl,
-                          resources.quality,
-                          resources.prevalence,
-                          bodies.body_kind,
-                          surveys.system_name,
-                          bodies.name
-                   FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   WHERE surveys.system_name like ?
-                   ORDER BY surveys.system_name ASC, resources.quality DESC, resources.name ASC
-                   """, (name,))
-    rows = cur.fetchall()
-    con.close()
-    return(rows)
-
-
-def find_resources_by_system_and_mintl(name,mintl):
+def find_resources_by_system(name,mintl):
     if mintl == None or mintl == '':
         mintl = 0
     name = "%%%s%%" % name
