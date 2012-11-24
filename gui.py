@@ -91,8 +91,9 @@ class Galactiscan(wx.Frame):
     def OnSearch(self, e):
         name = self.search_controls.name_field.GetValue()
         tl = self.search_controls.tl_field.GetValue()
-        rows = data.find_resources_by_name(name, tl)
-        data.display_rows(rows)
+        if name != '':
+            rows = data.find_resources_by_name(name, tl)
+            data.display_rows(rows)
 
     def InitUI(self):
         self.SetTitle('Galactiscan')
