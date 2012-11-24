@@ -1,10 +1,16 @@
 #!/usr/bin/python2
 # vim: ts=4 : sts=4 : sw=4 : et :
 
+import sqlite3
+import datetime
+import os.path
 import sys
 import wx
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 from wx.lib.mixins.listctrl import ColumnSorterMixin
+
+import Survey
+import data
 
 
 
@@ -79,7 +85,8 @@ class Galactiscan(wx.Frame):
     def OnSearch(self, e):
         name = self.search_controls.name_field.GetValue()
         tl = self.search_controls.tl_field.GetValue()
-        print("Searching for name="+name+" tl="+tl)
+        rows = data.find_resources_by_name(name, tl)
+        data.display_rows(rows)
 
     def InitUI(self):
         self.SetTitle('Galactiscan')
