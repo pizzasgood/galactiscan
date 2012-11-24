@@ -213,6 +213,8 @@ def find_resources_by_name(name):
 
 
 def find_resources_by_name_and_mintl(name,mintl):
+    if mintl == None or mintl == '':
+        mintl = 0
     name = "%%%s%%" % name
     con = get_con()
     cur = con.cursor()
@@ -253,6 +255,8 @@ def find_resources_by_planet(name):
 
 
 def find_resources_by_planet_and_mintl(name,mintl):
+    if mintl == None or mintl == '':
+        mintl = 0
     name = "%%%s%%" % name
     con = get_con()
     cur = con.cursor()
@@ -293,6 +297,8 @@ def find_resources_by_system(name):
 
 
 def find_resources_by_system_and_mintl(name,mintl):
+    if mintl == None or mintl == '':
+        mintl = 0
     name = "%%%s%%" % name
     con = get_con()
     cur = con.cursor()
