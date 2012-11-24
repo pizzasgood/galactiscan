@@ -60,9 +60,9 @@ class SearchControls(wx.BoxSizer):
         wx.BoxSizer.__init__(self, wx.HORIZONTAL)
 
         name_l = wx.StaticText(parent, label="Name")
-        self.name_field = wx.TextCtrl(parent)
+        self.name_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
         tl_l = wx.StaticText(parent, label="TL")
-        self.tl_field = wx.TextCtrl(parent)
+        self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
         self.search_button = wx.Button(parent, label="Search")
 
         self.Add(name_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
@@ -70,6 +70,12 @@ class SearchControls(wx.BoxSizer):
         self.Add(tl_l,               proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         self.Add(self.tl_field,      proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         self.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+    def GetNameFieldId(self):
+        return self.name_field.GetId()
+
+    def GetTlFieldId(self):
+        return self.tl_field.GetId()
 
     def GetSearchButtonId(self):
         return self.search_button.GetId()
@@ -108,6 +114,8 @@ class Galactiscan(wx.Frame):
         #boxes to query name and tl
         self.search_controls = SearchControls(panel)
         self.Bind(wx.EVT_BUTTON, self.OnSearch, id=self.search_controls.GetSearchButtonId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetNameFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetTlFieldId())
         main_vbox.Add(self.search_controls, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
 
 
