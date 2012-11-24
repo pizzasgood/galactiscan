@@ -13,10 +13,12 @@ def usage(ret = 0):
     print """galactiscan [-h|--help] <options> [file1 [file2..]]
 If no options are given, load the files into the database
 Options:
-    --help              shows this message
-    --clear-db          deletes the database
-    --tl <tl> [name]    shows resources >= tl, optionally matching name
-    --name <name> [tl]  shows resources matching name, optionally >= tl
+    --help                  shows this message
+    --clear-db              deletes the database
+    --tl <tl> [name]        shows resources >= tl, optionally matching name
+    --name <name> [tl]      shows resources matching name, optionally >= tl
+    --planet <name> [tl]    shows resources on planet named 'name', optionally >= tl
+    --system <name> [tl]    shows resources on system named 'name', optionally >= tl
 """
     exit(ret)
 
@@ -55,6 +57,24 @@ if len(sys.argv) > 1:
                 i+=2
             else:
                 rows = data.find_resources_by_name(sys.argv[i+1])
+                i+=1
+            data.display_rows(rows)
+            exit(0)
+        elif sys.argv[i] == '--planet' and len(sys.argv) > i+1:
+            if len(sys.argv) > i+2:
+                rows = data.find_resources_by_planet_and_mintl(sys.argv[i+1], sys.argv[i+2])
+                i+=2
+            else:
+                rows = data.find_resources_by_planet(sys.argv[i+1])
+                i+=1
+            data.display_rows(rows)
+            exit(0)
+        elif sys.argv[i] == '--system' and len(sys.argv) > i+1:
+            if len(sys.argv) > i+2:
+                rows = data.find_resources_by_system_and_mintl(sys.argv[i+1], sys.argv[i+2])
+                i+=2
+            else:
+                rows = data.find_resources_by_system(sys.argv[i+1])
                 i+=1
             data.display_rows(rows)
             exit(0)
