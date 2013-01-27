@@ -258,6 +258,14 @@ def find_resources_by_system(name,mintl):
     return(rows)
 
 
+def format_as_dict(rows):
+    index = 0
+    ret = {}
+    for row in rows:
+        ret[index] = (row[0],"TL"+str(row[1]),"Q"+str(row[2]),str(row[3])+"%",row[4],row[5],row[6])
+        index += 1
+    return ret
+
 def display_rows(rows):
     print("%24s  %4s  %4s  %4s  %10s  %s" % ('Resource', 'TL', 'Qual', 'Freq', 'Kind', 'Location'))
     print("-------------------------------------------------------------------------------")
