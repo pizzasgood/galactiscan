@@ -46,12 +46,20 @@ class ResultListCtrl(SortedListCtrl):
         self.InsertColumn(6, 'world', width=140)
 
         #insert the data
+        self.InsertData(data)
+
+    def InsertData(self, data):
         items = data.items()
         for key, i in items:
             index = self.InsertStringItem(sys.maxint, i[0])
             for k in range(1, len(i)):
                 self.SetStringItem(index, k, i[k])
             self.SetItemData(index, key)
+
+    def SetData(self, data):
+        self.DeleteAllItems()
+        self.InsertData(data)
+        self.itemDataMap = data
 
 
 
@@ -93,7 +101,7 @@ class Galactiscan(wx.Frame):
         tl = self.search_controls.tl_field.GetValue()
         if name != '':
             rows = data.find_resources_by_name(name, tl)
-            data.display_rows(rows)
+            self.list.SetData(data.format_as_dict(rows))
 
     def InitUI(self):
         self.SetTitle('Galactiscan')
@@ -122,8 +130,7 @@ class Galactiscan(wx.Frame):
 
         #the main viewing area
         stuff = {
-            1 : ('Antiflux Particles', 'TL29', 'Q228', '4%', 'Ring', 'Demo System', 'Demo IIbr'),
-            2 : ('Antiflux Particles', 'TL10', 'Q82', '1%', 'Planet', 'Demo System', 'Demo I'),
+            0 : ('', '', '', '', '', '', ''),
             }
         self.list = ResultListCtrl(panel, stuff)
         main_vbox.Add(self.list, 1, wx.EXPAND)
