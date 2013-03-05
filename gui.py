@@ -102,6 +102,7 @@ class Galactiscan(wx.Frame):
         if name != '':
             rows = data.find_resources_by_name(name, tl)
             self.list.SetData(data.format_as_dict(rows))
+            self.status.SetStatusText("%d resources found" % len(rows))
 
     def InitUI(self):
         self.SetTitle('Galactiscan')
@@ -134,6 +135,14 @@ class Galactiscan(wx.Frame):
             }
         self.list = ResultListCtrl(panel, stuff)
         main_vbox.Add(self.list, 1, wx.EXPAND)
+
+
+        #the status bar
+        self.status = wx.StatusBar(panel)
+        self.status.SetFieldsCount(1)
+        self.status.SetStatusStyles([wx.SB_FLAT])
+        self.status.SetStatusText("Welcome to Galactiscan")
+        main_vbox.Add(self.status)
 
 
         self.Show(True)
