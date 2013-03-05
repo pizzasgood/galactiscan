@@ -144,7 +144,7 @@ class Galactiscan(wx.Frame):
             0 : ('', '', '', '', '', '', ''),
             }
         self.list = ResultListCtrl(panel, stuff)
-        main_vbox.Add(self.list, 1, wx.EXPAND)
+        main_vbox.Add(self.list, proportion=1, flag=wx.EXPAND)
 
 
         #the status bar
