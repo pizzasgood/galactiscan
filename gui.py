@@ -104,15 +104,25 @@ class Galactiscan(wx.Frame):
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
 
+    def ClearDatabase(self, e):
+        data.drop_tables()
+        self.status.SetStatusText("Database cleared")
+
     def InitUI(self):
         self.SetTitle('Galactiscan')
 
         menubar = wx.MenuBar()
+
         fileMenu = wx.Menu()
+
+        fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
+        self.Bind(wx.EVT_MENU, self.ClearDatabase, fitem)
+
         fitem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit application')
+        self.Bind(wx.EVT_MENU, self.OnQuit, fitem)
+
         menubar.Append(fileMenu, '&File')
         self.SetMenuBar(menubar)
-        self.Bind(wx.EVT_MENU, self.OnQuit, fitem)
 
 
         #set up the panel
