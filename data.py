@@ -181,6 +181,7 @@ def find_resources_by_mintl(mintl):
                           resources.quality,
                           resources.prevalence,
                           bodies.body_kind,
+                          resources.zone,
                           surveys.system_name,
                           bodies.name
                    FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
@@ -203,6 +204,7 @@ def find_resources_by_name(name,mintl):
                           resources.quality,
                           resources.prevalence,
                           bodies.body_kind,
+                          resources.zone,
                           surveys.system_name,
                           bodies.name
                    FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
@@ -225,6 +227,7 @@ def find_resources_by_planet(name,mintl):
                           resources.quality,
                           resources.prevalence,
                           bodies.body_kind,
+                          resources.zone,
                           surveys.system_name,
                           bodies.name
                    FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
@@ -247,6 +250,7 @@ def find_resources_by_system(name,mintl):
                           resources.quality,
                           resources.prevalence,
                           bodies.body_kind,
+                          resources.zone,
                           surveys.system_name,
                           bodies.name
                    FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
@@ -262,13 +266,13 @@ def format_as_dict(rows):
     index = 0
     ret = {}
     for row in rows:
-        ret[index] = (row[0],"TL"+str(row[1]),"Q"+str(row[2]),str(row[3])+"%",row[4],row[5],row[6])
+        ret[index] = (row[0],"TL"+str(row[1]),"Q"+str(row[2]),str(row[3])+"%",row[4],str(row[5]+1),row[6],row[7])
         index += 1
     return ret
 
 def display_rows(rows):
-    print("%24s  %4s  %4s  %4s  %10s  %s" % ('Resource', 'TL', 'Qual', 'Freq', 'Kind', 'Location'))
+    print("%24s  %4s  %4s  %4s  %10s  %4s  %s" % ('Resource', 'TL', 'Qual', 'Freq', 'Kind', 'Zone', 'Location'))
     print("-------------------------------------------------------------------------------")
     for row in rows:
-        print("%24s  TL%-2s  Q%-3s  %3s%%  %10s  %s\t---  %s" % (row[0],row[1],row[2],row[3],row[4],row[5],row[6]))
+        print("%24s  TL%-2s  Q%-3s  %3s%%  %10s  %4s  %s\t---  %s" % (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
 
