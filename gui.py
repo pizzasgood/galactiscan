@@ -38,7 +38,7 @@ class ResultListCtrl(SortedListCtrl):
 
         #build the columns
         self.InsertColumn(0, 'name', width=140)
-        self.InsertColumn(1, 'tl', wx.LIST_FORMAT_RIGHT, 40)
+        self.InsertColumn(1, 'tl', wx.LIST_FORMAT_RIGHT, 50)
         self.InsertColumn(2, 'quality', wx.LIST_FORMAT_RIGHT, 60)
         self.InsertColumn(3, 'prev', wx.LIST_FORMAT_RIGHT, 40)
         self.InsertColumn(4, 'type', width=80)
