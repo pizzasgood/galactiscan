@@ -174,7 +174,7 @@ def print_row_dict(row, widths, order=None):
     
     line = '|'
     for key in order:
-        line += (widths[key]-len(str(row[key]))+1)*' ' + row[key] + ' |'
+        line += (widths[key]-len(str(row[key]))+1)*' ' + str(row[key]) + ' |'
     print(line)
 
 
