@@ -233,25 +233,28 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
     rows = cur.fetchall()
     con.close()
 
-    ret = format_as_assoc(rows)
+    ret = format_as_assoc(rows, (
+                'Resource',
+                'TL',
+                'Qual',
+                'Freq',
+                'Kind',
+                'Zone',
+                'System',
+                'World',
+                ))
 
     return(ret)
 
 
-def format_as_assoc(rows):
-    """Format the list of lists sqlite3 returns into a list of dictionaries."""
+def format_as_assoc(rows, keys):
+    """Format the list of lists sqlite3 returns into a list of dictionaries with provided keys."""
     ret = []
     for row in rows:
-        ret.append({
-                'Resource': row[0],
-                'TL': row[1],
-                'Qual': row[2],
-                'Freq': row[3],
-                'Kind': row[4],
-                'Zone': row[5],
-                'System': row[6],
-                'World': row[7],
-                })
+        temp_dict = {}
+        for index,key in enumerate(keys):
+            temp_dict[key] = row[index]
+        ret.append(temp_dict)
     return ret
 
 
