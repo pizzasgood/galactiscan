@@ -259,17 +259,27 @@ def format_as_assoc(rows, keys):
     return ret
 
 
+def decorate(rows):
+    """Decorate query results by converting to string, adding % signs, etc."""
+    for index,row in enumerate(rows):
+        rows[index]['TL'] = 'TL'+str(row['TL'])
+        rows[index]['Qual'] = 'Q'+str(row['Qual'])
+        rows[index]['Freq'] = str(row['Freq'])+'%'
+        rows[index]['Zone'] = str(row['Zone'])
+    return rows
+
+
 def format_as_dict(rows):
     """Format query results into a dictionary of tuples that ResultListCtrl can handle."""
     ret = {}
-    for index,row in enumerate(rows):
+    for index,row in enumerate(decorate(rows)):
         ret[index] = (
                 row['Resource'],
-                "TL"+str(row['TL']),
-                "Q"+str(row['Qual']),
-                str(row['Freq'])+"%",
+                row['TL'],
+                row['Qual'],
+                row['Freq'],
                 row['Kind'],
-                str(row['Zone']+1),
+                row['Zone'],
                 row['System'],
                 row['World'],
                 )
@@ -279,7 +289,7 @@ def format_as_dict(rows):
 def display_rows(rows):
     """Print query results to console in a table"""
 
-    tabulation.tabulate_dict(rows, (
+    tabulation.tabulate_dict(decorate(rows), (
                 'Resource',
                 'TL',
                 'Qual',
