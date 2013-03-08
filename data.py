@@ -173,6 +173,16 @@ def delete_survey(survey_id):
     con.close()
 
 
+def is_number(x):
+    try:
+        _ = int(x)
+    except TypeError:
+        return False
+    except ValueError:
+        return False
+    return True
+
+
 def find_resources(name=None,mintl=None,planet=None,system=None):
     query = """SELECT resources.name,
                           resources.tl,
@@ -186,10 +196,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
                    """
     conditions = []
     parameters = []
-    if mintl >= 0:
-        if mintl == '':
-            mintl = 0
-        mintl=int(mintl)
+    if is_number(mintl):
         conditions.append("resources.tl >= ?")
         parameters.append(mintl)
     if name != None and name != '':
