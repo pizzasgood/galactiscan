@@ -3,6 +3,7 @@
 import survey
 import sqlite3
 import datetime, time
+import tabulation
 
 def adapt_datetime(ts):
     """For use with sqlite3.register_adapter so that datetime is used correctly."""
@@ -277,26 +278,15 @@ def format_as_dict(rows):
 
 def display_rows(rows):
     """Print query results to console in a table"""
-    #TODO:  create a proper tabulate function to position headers automatically, avoiding the need to concat System and World
-    print("%24s  %4s  %4s  %4s  %10s  %4s  %s" % (
+
+    tabulation.tabulate_dict(rows, (
                 'Resource',
                 'TL',
                 'Qual',
                 'Freq',
                 'Kind',
                 'Zone',
-                'Location',
+                'World',
+                'System',
                 ))
-    print("-------------------------------------------------------------------------------")
-    for row in rows:
-        print("%24s  TL%-2s  Q%-3s  %3s%%  %10s  %4s  %s\t---  %s" % (
-                    row['Resource'],
-                    row['TL'],
-                    row['Qual'],
-                    row['Freq'],
-                    row['Kind'],
-                    row['Zone'],
-                    row['System'],
-                    row['World'],
-                    ))
 
