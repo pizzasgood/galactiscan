@@ -185,15 +185,15 @@ def is_number(x):
 
 def find_resources(name=None,mintl=None,planet=None,system=None):
     query = """SELECT resources.name,
-                          resources.tl,
-                          resources.quality,
-                          resources.prevalence,
-                          bodies.body_kind,
-                          resources.zone,
-                          surveys.system_name,
-                          bodies.name
-                   FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   """
+                      resources.tl,
+                      resources.quality,
+                      resources.prevalence,
+                      bodies.body_kind,
+                      resources.zone,
+                      surveys.system_name,
+                      bodies.name
+               FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
+               """
     conditions = []
     parameters = []
     if is_number(mintl):
