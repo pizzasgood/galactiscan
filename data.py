@@ -173,10 +173,8 @@ def delete_survey(survey_id):
     con.close()
 
 
-def find_resources_by_mintl(mintl):
-    con = get_con()
-    cur = con.cursor()
-    cur.execute("""SELECT resources.name,
+def find_resources(name=None,mintl=None,planet=None,system=None):
+    query = """SELECT resources.name,
                           resources.tl,
                           resources.quality,
                           resources.prevalence,
@@ -185,78 +183,43 @@ def find_resources_by_mintl(mintl):
                           surveys.system_name,
                           bodies.name
                    FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   WHERE resources.tl >= ?
-                   ORDER BY resources.name ASC, resources.quality DESC
-                   """, (int(mintl),))
-    rows = cur.fetchall()
-    con.close()
-    return(rows)
+                   """
+    conditions = []
+    parameters = []
+    if mintl >= 0:
+        if mintl == '':
+            mintl = 0
+        mintl=int(mintl)
+        conditions.append("resources.tl >= ?")
+        parameters.append(mintl)
+    if name != None and name != '':
+        name = "%%%s%%" % name
+        conditions.append("resources.name like ?")
+        parameters.append(name)
+    if planet != None and planet != '':
+        planet = "%%%s%%" % planet
+        conditions.append("bodies.name like ?")
+        parameters.append(planet)
+    if system != None and system != '':
+        system = "%%%s%%" % system
+        conditions.append("surveys.system_name like ?")
+        parameters.append(system)
 
+    query += "WHERE " + " AND ".join(conditions) + " "
 
-def find_resources_by_name(name,mintl):
-    if mintl == None or mintl == '':
-        mintl = 0
-    name = "%%%s%%" % name
+    orders = []
+    orders.append('resources.name ASC')
+    orders.append('resources.quality DESC')
+    orders.append('resources.prevalence DESC')
+    orders.append('surveys.system_name ASC')
+    orders.append('bodies.name ASC')
+    orders.append('resources.zone ASC')
+
+    query += "ORDER BY " + ", ".join(orders)
+
     con = get_con()
     cur = con.cursor()
-    cur.execute("""SELECT resources.name,
-                          resources.tl,
-                          resources.quality,
-                          resources.prevalence,
-                          bodies.body_kind,
-                          resources.zone,
-                          surveys.system_name,
-                          bodies.name
-                   FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   WHERE resources.name like ? AND resources.tl >= ?
-                   ORDER BY resources.name ASC, resources.quality DESC
-                   """, (name,int(mintl)))
-    rows = cur.fetchall()
-    con.close()
-    return(rows)
-
-
-def find_resources_by_planet(name,mintl):
-    if mintl == None or mintl == '':
-        mintl = 0
-    name = "%%%s%%" % name
-    con = get_con()
-    cur = con.cursor()
-    cur.execute("""SELECT resources.name,
-                          resources.tl,
-                          resources.quality,
-                          resources.prevalence,
-                          bodies.body_kind,
-                          resources.zone,
-                          surveys.system_name,
-                          bodies.name
-                   FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   WHERE bodies.name like ? AND resources.tl >= ?
-                   ORDER BY bodies.name ASC, resources.quality DESC, resources.name ASC
-                   """, (name,int(mintl)))
-    rows = cur.fetchall()
-    con.close()
-    return(rows)
-
-
-def find_resources_by_system(name,mintl):
-    if mintl == None or mintl == '':
-        mintl = 0
-    name = "%%%s%%" % name
-    con = get_con()
-    cur = con.cursor()
-    cur.execute("""SELECT resources.name,
-                          resources.tl,
-                          resources.quality,
-                          resources.prevalence,
-                          bodies.body_kind,
-                          resources.zone,
-                          surveys.system_name,
-                          bodies.name
-                   FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
-                   WHERE surveys.system_name like ? AND resources.tl >= ?
-                   ORDER BY surveys.system_name ASC, resources.quality DESC, resources.name ASC
-                   """, (name,int(mintl)))
+    cur.execute(query, parameters)
     rows = cur.fetchall()
     con.close()
     return(rows)

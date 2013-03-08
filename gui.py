@@ -101,7 +101,7 @@ class Galactiscan(wx.Frame):
         name = self.search_controls.name_field.GetValue()
         tl = self.search_controls.tl_field.GetValue()
         if name != '':
-            rows = data.find_resources_by_name(name, tl)
+            rows = data.find_resources(name=name, mintl=tl)
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
 

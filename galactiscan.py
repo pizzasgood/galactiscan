@@ -47,37 +47,37 @@ if len(sys.argv) > 1:
                 exit(1)
         elif sys.argv[i] == '--tl' and len(sys.argv) > i+1:
             if len(sys.argv) > i+2:
-                rows = data.find_resources_by_name(sys.argv[i+2], sys.argv[i+1])
+                rows = data.find_resources(name=sys.argv[i+2], mintl=sys.argv[i+1])
                 i+=2
             else:
-                rows = data.find_resources_by_mintl(sys.argv[i+1])
+                rows = data.find_resources(name=sys.argv[i+1])
                 i+=1
             data.display_rows(rows)
             exit(0)
         elif sys.argv[i] == '--name' and len(sys.argv) > i+1:
             if len(sys.argv) > i+2:
-                rows = data.find_resources_by_name(sys.argv[i+1], sys.argv[i+2])
+                rows = data.find_resources(name=sys.argv[i+1], mintl=sys.argv[i+2])
                 i+=2
             else:
-                rows = data.find_resources_by_name(sys.argv[i+1], 0)
+                rows = data.find_resources(name=sys.argv[i+1])
                 i+=1
             data.display_rows(rows)
             exit(0)
         elif sys.argv[i] == '--planet' and len(sys.argv) > i+1:
             if len(sys.argv) > i+2:
-                rows = data.find_resources_by_planet(sys.argv[i+1], sys.argv[i+2])
+                rows = data.find_resources(planet=sys.argv[i+1], mintl=sys.argv[i+2])
                 i+=2
             else:
-                rows = data.find_resources_by_planet(sys.argv[i+1], 0)
+                rows = data.find_resources(planet=sys.argv[i+1])
                 i+=1
             data.display_rows(rows)
             exit(0)
         elif sys.argv[i] == '--system' and len(sys.argv) > i+1:
             if len(sys.argv) > i+2:
-                rows = data.find_resources_by_system(sys.argv[i+1], sys.argv[i+2])
+                rows = data.find_resources(system=sys.argv[i+1], mintl=sys.argv[i+2])
                 i+=2
             else:
-                rows = data.find_resources_by_system(sys.argv[i+1], 0)
+                rows = data.find_resources(system=sys.argv[i+1])
                 i+=1
             data.display_rows(rows)
             exit(0)
