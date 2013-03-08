@@ -16,8 +16,8 @@ def tabulate_list(data, header=False):
 
         >>> tabulate_list([
         ...                ['Resource', 'TL',   'Quality'],
-        ...                ['Ore',      'TL32', ' 249'],
-        ...                ['Minerals', 'TL1',  ' 1']
+        ...                ['Ore',      'TL32', 249],
+        ...                ['Minerals', 'TL1',  1]
         ...               ])
         +----------+------+---------+
         | Resource |   TL | Quality |
@@ -27,8 +27,8 @@ def tabulate_list(data, header=False):
 
         >>> tabulate_list([
         ...                ['Resource', 'TL',   'Quality'],
-        ...                ['Ore',      'TL32', ' 249'],
-        ...                ['Minerals', 'TL1',  ' 1']
+        ...                ['Ore',      'TL32', 249],
+        ...                ['Minerals', 'TL1',  1]
         ...               ], True)
         +----------+------+---------+
         | Resource |   TL | Quality |
@@ -72,12 +72,12 @@ def print_row(row, widths):
     """
         Print a single row of tabulated data.
 
-        >>> print_row(['Ore','TL32','249'], [8,4,7])
+        >>> print_row(['Ore','TL32',249], [8,4,7])
         |      Ore | TL32 |     249 |
     """
     line = '|'
     for i,v in enumerate(row):
-        line += (widths[i]-len(str(v))+1)*' ' + v + ' |'
+        line += (widths[i]-len(str(v))+1)*' ' + str(v) + ' |'
     print(line)
 
 
@@ -92,8 +92,8 @@ def tabulate_dict(data, order=None, header=False):
 
         >>> tabulate_dict([
         ...                {'Resource':'Res',      'TL':'Tech Level', 'Quality':'Qual'},
-        ...                {'Resource':'Ore',      'TL':'TL32',       'Quality':'249'},
-        ...                {'Resource':'Minerals', 'TL':'TL1',        'Quality':'1'}
+        ...                {'Resource':'Ore',      'TL':'TL32',       'Quality':249},
+        ...                {'Resource':'Minerals', 'TL':'TL1',        'Quality':1}
         ...               ], ['Resource','TL','Quality'], True)
         +----------+------------+------+
         |      Res | Tech Level | Qual |
@@ -103,8 +103,8 @@ def tabulate_dict(data, order=None, header=False):
         +----------+------------+------+
 
         >>> tabulate_dict([
-        ...                {'Resource':'Ore',      'TL':'TL32', 'Quality':'249'},
-        ...                {'Resource':'Minerals', 'TL':'TL1',  'Quality':'1'}
+        ...                {'Resource':'Ore',      'TL':'TL32', 'Quality':249},
+        ...                {'Resource':'Minerals', 'TL':'TL1',  'Quality':1}
         ...               ], ['Resource','TL','Quality'])
         +----------+------+---------+
         | Resource |   TL | Quality |
@@ -163,7 +163,7 @@ def print_row_dict(row, widths, order=None):
         The widths should be a dictionary of the widths.
         The order parameter is an optional list of keys.
 
-        >>> print_row_dict({'Resource':'Ore','TL':'TL32','Quality':'249'},
+        >>> print_row_dict({'Resource':'Ore','TL':'TL32','Quality':249},
         ...                {'Resource':8,'TL':4,'Quality':7},
         ...                ['Resource','TL','Quality'])
         |      Ore | TL32 |     249 |
