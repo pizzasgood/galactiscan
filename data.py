@@ -4,8 +4,8 @@ import Survey
 import sqlite3
 import datetime, time
 
-#use datetime correctly
 def adapt_datetime(ts):
+    """For use with sqlite3.register_adapter so that datetime is used correctly."""
     return time.mktime(ts.timetuple())
 sqlite3.register_adapter(datetime.datetime, adapt_datetime)
 
@@ -14,6 +14,7 @@ db_name = 'database.sqlite3'
 
 
 def get_con():
+    """Get connection to database."""
     con = sqlite3.connect('database.sqlite3')
     con.row_factory = sqlite3.Row
     return con
@@ -174,6 +175,7 @@ def delete_survey(survey_id):
 
 
 def is_number(x):
+    """Check whether parameter is an integer."""
     try:
         _ = int(x)
     except TypeError:
@@ -184,6 +186,7 @@ def is_number(x):
 
 
 def find_resources(name=None,mintl=None,planet=None,system=None):
+    """Find resources matching parameters and return as list of dictionaries."""
     query = """SELECT resources.name,
                       resources.tl,
                       resources.quality,
@@ -236,6 +239,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
 
 
 def format_as_assoc(rows):
+    """Format the list of lists sqlite3 returns into a list of dictionaries."""
     ret = []
     for row in rows:
         ret.append({
@@ -252,6 +256,7 @@ def format_as_assoc(rows):
 
 
 def format_as_dict(rows):
+    """Format query results into a dictionary of tuples that ResultListCtrl can handle."""
     index = 0
     ret = {}
     for row in rows:
@@ -270,6 +275,7 @@ def format_as_dict(rows):
 
 
 def display_rows(rows):
+    """Print query results to console in a table"""
     #TODO:  create a proper tabulate function to position headers automatically, avoiding the need to concat System and World
     print("%24s  %4s  %4s  %4s  %10s  %4s  %s" % (
                 'Resource',
