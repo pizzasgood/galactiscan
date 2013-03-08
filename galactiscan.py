@@ -6,7 +6,7 @@ import datetime
 import os.path
 import sys
 
-import Survey
+import survey
 import data
 import gui
 
@@ -28,7 +28,7 @@ Options:
 def add_files(files):
     data.create_tables()
     for f in files:
-        surveys = Survey.process_survey_file(f)
+        surveys = survey.process_survey_file(f)
         for s in surveys:
             data.save_survey(s)
 

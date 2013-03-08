@@ -1,6 +1,6 @@
 # vim: ts=4 : sts=4 : sw=4 : et :
 
-import Survey
+import survey
 import sqlite3
 import datetime, time
 
@@ -79,7 +79,7 @@ def create_tables():
 
 
 def save_survey(system):
-    """Save a Survey.system to the database."""
+    """Save a survey.system to the database."""
 
     con = get_con()
     cur = con.cursor()

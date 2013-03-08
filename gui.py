@@ -9,7 +9,7 @@ import wx
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 from wx.lib.mixins.listctrl import ColumnSorterMixin
 
-import Survey
+import survey
 import data
 
 
