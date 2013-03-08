@@ -43,8 +43,8 @@ class ResultListCtrl(SortedListCtrl):
         self.InsertColumn(3, 'prev', wx.LIST_FORMAT_RIGHT, 40)
         self.InsertColumn(4, 'type', width=80)
         self.InsertColumn(5, 'zone', width=50)
-        self.InsertColumn(6, 'system', width=140)
-        self.InsertColumn(7, 'world', width=140)
+        self.InsertColumn(6, 'world', width=140)
+        self.InsertColumn(7, 'system', width=140)
 
         #insert the data
         self.InsertData(data)

@@ -280,8 +280,8 @@ def format_as_dict(rows):
                 row['Freq'],
                 row['Kind'],
                 row['Zone'],
-                row['System'],
                 row['World'],
+                row['System'],
                 )
     return ret
 
