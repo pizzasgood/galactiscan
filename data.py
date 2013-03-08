@@ -229,20 +229,67 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
     cur.execute(query, parameters)
     rows = cur.fetchall()
     con.close()
-    return(rows)
+
+    ret = format_as_assoc(rows)
+
+    return(ret)
+
+
+def format_as_assoc(rows):
+    ret = []
+    for row in rows:
+        ret.append({
+                'Resource': row[0],
+                'TL': row[1],
+                'Qual': row[2],
+                'Freq': row[3],
+                'Kind': row[4],
+                'Zone': row[5],
+                'System': row[6],
+                'World': row[7],
+                })
+    return ret
 
 
 def format_as_dict(rows):
     index = 0
     ret = {}
     for row in rows:
-        ret[index] = (row[0],"TL"+str(row[1]),"Q"+str(row[2]),str(row[3])+"%",row[4],str(row[5]+1),row[6],row[7])
+        ret[index] = (
+                row['Resource'],
+                "TL"+str(row['TL']),
+                "Q"+str(row['Qual']),
+                str(row['Freq'])+"%",
+                row['Kind'],
+                str(row['Zone']+1),
+                row['System'],
+                row['World'],
+                )
         index += 1
     return ret
 
+
 def display_rows(rows):
-    print("%24s  %4s  %4s  %4s  %10s  %4s  %s" % ('Resource', 'TL', 'Qual', 'Freq', 'Kind', 'Zone', 'Location'))
+    #TODO:  create a proper tabulate function to position headers automatically, avoiding the need to concat System and World
+    print("%24s  %4s  %4s  %4s  %10s  %4s  %s" % (
+                'Resource',
+                'TL',
+                'Qual',
+                'Freq',
+                'Kind',
+                'Zone',
+                'Location',
+                ))
     print("-------------------------------------------------------------------------------")
     for row in rows:
-        print("%24s  TL%-2s  Q%-3s  %3s%%  %10s  %4s  %s\t---  %s" % (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
+        print("%24s  TL%-2s  Q%-3s  %3s%%  %10s  %4s  %s\t---  %s" % (
+                    row['Resource'],
+                    row['TL'],
+                    row['Qual'],
+                    row['Freq'],
+                    row['Kind'],
+                    row['Zone'],
+                    row['System'],
+                    row['World'],
+                    ))
 
