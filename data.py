@@ -260,9 +260,8 @@ def format_as_assoc(rows, keys):
 
 def format_as_dict(rows):
     """Format query results into a dictionary of tuples that ResultListCtrl can handle."""
-    index = 0
     ret = {}
-    for row in rows:
+    for index,row in enumerate(rows):
         ret[index] = (
                 row['Resource'],
                 "TL"+str(row['TL']),
@@ -273,7 +272,6 @@ def format_as_dict(rows):
                 row['System'],
                 row['World'],
                 )
-        index += 1
     return ret
 
 
