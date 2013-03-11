@@ -289,6 +289,7 @@ def format_as_dict(rows):
                 row['Zone'],
                 row['World'],
                 row['System'],
+                row['Sector'],
                 )
     return ret
 
@@ -305,5 +306,6 @@ def display_rows(rows):
                 'Zone',
                 'World',
                 'System',
+                'Sector',
                 ))
 
