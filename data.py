@@ -267,12 +267,16 @@ def format_as_assoc(rows, keys):
 
 
 def decorate(rows):
-    """Decorate query results by converting to string, adding % signs, etc."""
+    """
+        Decorate query results by converting to string, adding % signs, etc.
+
+        This also increments the 'Zone' field so it indexes from 1 instead of 0.
+    """
     for index,row in enumerate(rows):
         rows[index]['TL'] = 'TL'+str(row['TL'])
         rows[index]['Qual'] = 'Q'+str(row['Qual'])
         rows[index]['Freq'] = str(row['Freq'])+'%'
-        rows[index]['Zone'] = str(row['Zone'])
+        rows[index]['Zone'] = str(row['Zone']+1)
     return rows
 
 
