@@ -186,7 +186,7 @@ def is_number(x):
     return True
 
 
-def find_resources(name=None,mintl=None,planet=None,system=None):
+def find_resources(name=None,mintl=None,planet=None,system=None,sector=None):
     """Find resources matching parameters and return as list of dictionaries."""
     query = """SELECT resources.name,
                       resources.tl,
@@ -194,6 +194,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
                       resources.prevalence,
                       bodies.body_kind,
                       resources.zone,
+                      surveys.sector_name,
                       surveys.system_name,
                       bodies.name
                FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
@@ -215,6 +216,10 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
         system = "%%%s%%" % system
         conditions.append("surveys.system_name like ?")
         parameters.append(system)
+    if sector != None and sector != '':
+        sector = "%%%s%%" % sector
+        conditions.append("surveys.sector_name like ?")
+        parameters.append(sector)
 
     query += "WHERE " + " AND ".join(conditions) + " "
 
@@ -222,6 +227,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
     orders.append('resources.name ASC')
     orders.append('resources.quality DESC')
     orders.append('resources.prevalence DESC')
+    orders.append('surveys.sector_name ASC')
     orders.append('surveys.system_name ASC')
     orders.append('bodies.name ASC')
     orders.append('resources.zone ASC')
@@ -241,6 +247,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None):
                 'Freq',
                 'Kind',
                 'Zone',
+                'Sector',
                 'System',
                 'World',
                 ))
