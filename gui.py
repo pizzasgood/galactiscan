@@ -134,7 +134,7 @@ class Galactiscan(wx.Frame):
         planet = self.search_controls.planet_field.GetValue()
         system = self.search_controls.system_field.GetValue()
         sector = self.search_controls.sector_field.GetValue()
-        if name != '':
+        if name+tl+planet+system+sector != '':
             rows = data.find_resources(name=name, mintl=tl, planet=planet, system=system, sector=sector)
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
