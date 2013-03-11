@@ -273,9 +273,9 @@ def decorate(rows):
         This also increments the 'Zone' field so it indexes from 1 instead of 0.
     """
     for index,row in enumerate(rows):
-        rows[index]['TL'] = 'TL'+str(row['TL'])
-        rows[index]['Qual'] = 'Q'+str(row['Qual'])
-        rows[index]['Freq'] = str(row['Freq'])+'%'
+        rows[index]['TL'] = 'TL%02d' % int(row['TL'])
+        rows[index]['Qual'] = 'Q%03d' % int(row['Qual'])
+        rows[index]['Freq'] = '%03d%%' % int(row['Freq'])
         rows[index]['Zone'] = str(row['Zone']+1)
     return rows
 
