@@ -66,25 +66,55 @@ class ResultListCtrl(SortedListCtrl):
 
 class SearchControls(wx.BoxSizer):
     def __init__(self, parent):
-        wx.BoxSizer.__init__(self, wx.HORIZONTAL)
+        wx.BoxSizer.__init__(self, wx.VERTICAL)
 
         name_l = wx.StaticText(parent, label="Name")
         self.name_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        tl_l = wx.StaticText(parent, label="TL")
+        tl_l = wx.StaticText(parent, label="Min TL")
         self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        planet_l = wx.StaticText(parent, label="Planet")
+        self.planet_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        system_l = wx.StaticText(parent, label="System")
+        self.system_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        sector_l = wx.StaticText(parent, label="Sector")
+        self.sector_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+
         self.search_button = wx.Button(parent, label="Search")
 
-        self.Add(name_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        self.Add(self.name_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        self.Add(tl_l,               proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        self.Add(self.tl_field,      proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        self.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1 = wx.BoxSizer(wx.HORIZONTAL)
+        hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        self.Add(hbox1, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
+        self.Add(hbox2, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
+
+        hbox1.Add(name_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.name_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(tl_l,               proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.tl_field,      proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        hbox2.Add(planet_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(self.planet_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(system_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(self.system_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(sector_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(self.sector_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+
 
     def GetNameFieldId(self):
         return self.name_field.GetId()
 
     def GetTlFieldId(self):
         return self.tl_field.GetId()
+
+    def GetPlanetFieldId(self):
+        return self.planet_field.GetId()
+
+    def GetSystemFieldId(self):
+        return self.system_field.GetId()
+
+    def GetSectorFieldId(self):
+        return self.sector_field.GetId()
 
     def GetSearchButtonId(self):
         return self.search_button.GetId()
@@ -100,8 +130,11 @@ class Galactiscan(wx.Frame):
     def OnSearch(self, e):
         name = self.search_controls.name_field.GetValue()
         tl = self.search_controls.tl_field.GetValue()
+        planet = self.search_controls.planet_field.GetValue()
+        system = self.search_controls.system_field.GetValue()
+        sector = self.search_controls.sector_field.GetValue()
         if name != '':
-            rows = data.find_resources(name=name, mintl=tl)
+            rows = data.find_resources(name=name, mintl=tl, planet=planet, system=system, sector=sector)
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
 
@@ -137,6 +170,9 @@ class Galactiscan(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnSearch, id=self.search_controls.GetSearchButtonId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetNameFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetTlFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetPlanetFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetSystemFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetSectorFieldId())
         main_vbox.Add(self.search_controls, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
 
 
