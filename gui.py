@@ -80,13 +80,27 @@ class SearchControls(wx.BoxSizer):
         self.system_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
         sector_l = wx.StaticText(parent, label="Sector")
         self.sector_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        minsecx_l = wx.StaticText(parent, label="Min X")
+        self.minsecx_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        minsecy_l = wx.StaticText(parent, label="Min Y")
+        self.minsecy_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        minsecz_l = wx.StaticText(parent, label="Min Z")
+        self.minsecz_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        maxsecx_l = wx.StaticText(parent, label="Max X")
+        self.maxsecx_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        maxsecy_l = wx.StaticText(parent, label="Max Y")
+        self.maxsecy_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        maxsecz_l = wx.StaticText(parent, label="Max Z")
+        self.maxsecz_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
 
         self.search_button = wx.Button(parent, label="Search")
 
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        hbox3 = wx.BoxSizer(wx.HORIZONTAL)
         self.Add(hbox1, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
         self.Add(hbox2, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
+        self.Add(hbox3, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
 
         hbox1.Add(name_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(self.name_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
@@ -101,6 +115,18 @@ class SearchControls(wx.BoxSizer):
         hbox2.Add(sector_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox2.Add(self.sector_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
+        hbox3.Add(minsecx_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(self.minsecx_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(minsecy_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(self.minsecy_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(minsecz_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(self.minsecz_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(maxsecx_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(self.maxsecx_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(maxsecy_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(self.maxsecy_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(maxsecz_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(self.maxsecz_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
 
     def GetNameFieldId(self):
@@ -117,6 +143,24 @@ class SearchControls(wx.BoxSizer):
 
     def GetSectorFieldId(self):
         return self.sector_field.GetId()
+
+    def GetMinsecxFieldId(self):
+        return self.minsecx_field.GetId()
+
+    def GetMinsecyFieldId(self):
+        return self.minsecy_field.GetId()
+
+    def GetMinseczFieldId(self):
+        return self.minsecz_field.GetId()
+
+    def GetMaxsecxFieldId(self):
+        return self.maxsecx_field.GetId()
+
+    def GetMaxsecyFieldId(self):
+        return self.maxsecy_field.GetId()
+
+    def GetMaxseczFieldId(self):
+        return self.maxsecz_field.GetId()
 
     def GetSearchButtonId(self):
         return self.search_button.GetId()
@@ -135,8 +179,14 @@ class Galactiscan(wx.Frame):
         planet = self.search_controls.planet_field.GetValue()
         system = self.search_controls.system_field.GetValue()
         sector = self.search_controls.sector_field.GetValue()
+        minsecx = self.search_controls.minsecx_field.GetValue()
+        minsecy = self.search_controls.minsecy_field.GetValue()
+        minsecz = self.search_controls.minsecz_field.GetValue()
+        maxsecx = self.search_controls.maxsecx_field.GetValue()
+        maxsecy = self.search_controls.maxsecy_field.GetValue()
+        maxsecz = self.search_controls.maxsecz_field.GetValue()
         if name+tl+planet+system+sector != '':
-            rows = data.find_resources(name=name, mintl=tl, planet=planet, system=system, sector=sector)
+            rows = data.find_resources(name=name, mintl=tl, planet=planet, system=system, sector=sector, minsecx=minsecx, minsecy=minsecy, minsecz=minsecz, maxsecx=maxsecx, maxsecy=maxsecy, maxsecz=maxsecz)
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
 
@@ -175,6 +225,12 @@ class Galactiscan(wx.Frame):
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetPlanetFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetSystemFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetSectorFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMinsecxFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMinsecyFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMinseczFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecxFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecyFieldId())
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxseczFieldId())
         main_vbox.Add(self.search_controls, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
 
 

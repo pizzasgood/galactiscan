@@ -194,7 +194,7 @@ def is_number(x):
     return True
 
 
-def find_resources(name=None,mintl=None,planet=None,system=None,sector=None):
+def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None):
     """Find resources matching parameters and return as list of dictionaries."""
     query = """SELECT resources.name,
                       resources.tl,
@@ -229,6 +229,24 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None):
         sector = "%%%s%%" % sector
         conditions.append("surveys.sector_name like ?")
         parameters.append(sector)
+    if is_number(minsecx):
+        conditions.append("surveys.sector_x >= ?")
+        parameters.append(minsecx)
+    if is_number(minsecy):
+        conditions.append("surveys.sector_y >= ?")
+        parameters.append(minsecy)
+    if is_number(minsecz):
+        conditions.append("surveys.sector_z >= ?")
+        parameters.append(minsecz)
+    if is_number(maxsecx):
+        conditions.append("surveys.sector_x <= ?")
+        parameters.append(maxsecx)
+    if is_number(maxsecy):
+        conditions.append("surveys.sector_y <= ?")
+        parameters.append(maxsecy)
+    if is_number(maxsecz):
+        conditions.append("surveys.sector_z <= ?")
+        parameters.append(maxsecz)
 
     query += "WHERE " + " AND ".join(conditions) + " "
 
