@@ -204,12 +204,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None):
                       resources.zone,
                       surveys.sector_name,
                       surveys.system_name,
-                      surveys.system_x,
-                      surveys.system_y,
-                      surveys.system_z,
-                      surveys.sector_x,
-                      surveys.sector_y,
-                      surveys.sector_z,
+                      surveys.system_id,
                       bodies.name
                FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
                """
@@ -263,12 +258,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None):
                 'Zone',
                 'Sector',
                 'System',
-                'System X',
-                'System Y',
-                'System Z',
-                'Sector X',
-                'Sector Y',
-                'Sector Z',
+                'Coords',
                 'World',
                 ))
 
@@ -297,12 +287,6 @@ def decorate(rows):
         rows[index]['Qual'] = 'Q%03d' % int(row['Qual'])
         rows[index]['Freq'] = '%03d%%' % int(row['Freq'])
         rows[index]['Zone'] = str(row['Zone']+1)
-        rows[index]['System X'] = str(row['System X'])
-        rows[index]['System Y'] = str(row['System Y'])
-        rows[index]['System Z'] = str(row['System Z'])
-        rows[index]['Sector X'] = str(row['Sector X'])
-        rows[index]['Sector Y'] = str(row['Sector Y'])
-        rows[index]['Sector Z'] = str(row['Sector Z'])
     return rows
 
 
@@ -320,12 +304,7 @@ def format_as_dict(rows):
                 row['World'],
                 row['System'],
                 row['Sector'],
-                row['System X'],
-                row['System Y'],
-                row['System Z'],
-                row['Sector X'],
-                row['Sector Y'],
-                row['Sector Z'],
+                row['Coords'],
                 )
     return ret
 
@@ -343,11 +322,6 @@ def display_rows(rows):
                 'World',
                 'System',
                 'Sector',
-                'System X',
-                'System Y',
-                'System Z',
-                'Sector X',
-                'Sector Y',
-                'Sector Z',
+                'Coords',
                 ))
 
