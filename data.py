@@ -39,8 +39,14 @@ def create_tables():
     con.execute("""create table if not exists surveys (
                     survey_date date,
                     stored_date date,
+                    system_x    real,
+                    system_y    real,
+                    system_z    real,
                     system_name text,
                     system_id   text,
+                    sector_x    integer,
+                    sector_y    integer,
+                    sector_z    integer,
                     sector_name text,
                     sector_id   text
                     )""")
@@ -102,9 +108,11 @@ def save_survey(system):
             delete_survey(row[0])
 
     #add the survey
-    cur.execute("insert into surveys values (?,?,?,?,?,?)", (
+    cur.execute("insert into surveys values (?,?,?,?,?,?,?,?,?,?,?,?)", (
             system.date, datetime.datetime.now(),
+            system.location.system_coords.x, system.location.system_coords.y, system.location.system_coords.z,
             system.location.system_name, str(system.location.universal_coords),
+            system.location.sector_coords.x, system.location.sector_coords.y, system.location.sector_coords.z,
             system.location.sector_name, str(system.location.sector_coords),
             ))
     survey_id = cur.lastrowid
@@ -196,6 +204,12 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None):
                       resources.zone,
                       surveys.sector_name,
                       surveys.system_name,
+                      surveys.system_x,
+                      surveys.system_y,
+                      surveys.system_z,
+                      surveys.sector_x,
+                      surveys.sector_y,
+                      surveys.sector_z,
                       bodies.name
                FROM resources LEFT JOIN bodies,surveys ON (resources.body_id = bodies.ROWID AND resources.survey_id = surveys.ROWID)
                """
@@ -249,6 +263,12 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None):
                 'Zone',
                 'Sector',
                 'System',
+                'System X',
+                'System Y',
+                'System Z',
+                'Sector X',
+                'Sector Y',
+                'Sector Z',
                 'World',
                 ))
 
@@ -277,6 +297,12 @@ def decorate(rows):
         rows[index]['Qual'] = 'Q%03d' % int(row['Qual'])
         rows[index]['Freq'] = '%03d%%' % int(row['Freq'])
         rows[index]['Zone'] = str(row['Zone']+1)
+        rows[index]['System X'] = str(row['System X'])
+        rows[index]['System Y'] = str(row['System Y'])
+        rows[index]['System Z'] = str(row['System Z'])
+        rows[index]['Sector X'] = str(row['Sector X'])
+        rows[index]['Sector Y'] = str(row['Sector Y'])
+        rows[index]['Sector Z'] = str(row['Sector Z'])
     return rows
 
 
@@ -294,6 +320,12 @@ def format_as_dict(rows):
                 row['World'],
                 row['System'],
                 row['Sector'],
+                row['System X'],
+                row['System Y'],
+                row['System Z'],
+                row['Sector X'],
+                row['Sector Y'],
+                row['Sector Z'],
                 )
     return ret
 
@@ -311,5 +343,11 @@ def display_rows(rows):
                 'World',
                 'System',
                 'Sector',
+                'System X',
+                'System Y',
+                'System Z',
+                'Sector X',
+                'Sector Y',
+                'Sector Z',
                 ))
 
