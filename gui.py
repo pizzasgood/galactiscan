@@ -95,6 +95,7 @@ class SearchControls(wx.BoxSizer):
         radius_l = wx.StaticText(parent, label="Search Radius:")
         self.radius_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
 
+        self.reset_button = wx.Button(parent, label="Reset")
         self.search_button = wx.Button(parent, label="Search")
 
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -151,6 +152,7 @@ class SearchControls(wx.BoxSizer):
 
         hbox_radius.Add(radius_l,           proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox_radius.Add(self.radius_field,  proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_radius.Add(self.reset_button,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox_radius.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
 
@@ -199,6 +201,9 @@ class SearchControls(wx.BoxSizer):
     def GetRadiusFieldId(self):
         return self.center_field.GetId()
 
+    def GetResetButtonId(self):
+        return self.reset_button.GetId()
+
     def GetSearchButtonId(self):
         return self.search_button.GetId()
 
@@ -209,6 +214,23 @@ class Galactiscan(wx.Frame):
         super(Galactiscan, self).__init__(*args, **kwargs)
 
         self.InitUI()
+
+    def OnReset(self, e):
+        name = self.search_controls.name_field.SetValue("")
+        tl = self.search_controls.tl_field.SetValue("")
+        planet = self.search_controls.planet_field.SetValue("")
+        system = self.search_controls.system_field.SetValue("")
+        sector = self.search_controls.sector_field.SetValue("")
+        minsecx = self.search_controls.minsecx_field.SetValue("")
+        minsecy = self.search_controls.minsecy_field.SetValue("")
+        minsecz = self.search_controls.minsecz_field.SetValue("")
+        maxsecx = self.search_controls.maxsecx_field.SetValue("")
+        maxsecy = self.search_controls.maxsecy_field.SetValue("")
+        maxsecz = self.search_controls.maxsecz_field.SetValue("")
+        centerx = self.search_controls.centerx_field.SetValue("")
+        centery = self.search_controls.centery_field.SetValue("")
+        centerz = self.search_controls.centerz_field.SetValue("")
+        radius = self.search_controls.radius_field.SetValue("")
 
     def OnSearch(self, e):
         name = self.search_controls.name_field.GetValue()
@@ -266,6 +288,7 @@ class Galactiscan(wx.Frame):
 
         #boxes to query name and tl
         self.search_controls = SearchControls(panel)
+        self.Bind(wx.EVT_BUTTON, self.OnReset,  id=self.search_controls.GetResetButtonId())
         self.Bind(wx.EVT_BUTTON, self.OnSearch, id=self.search_controls.GetSearchButtonId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetNameFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetTlFieldId())
