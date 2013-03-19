@@ -183,10 +183,21 @@ def delete_survey(survey_id):
     con.close()
 
 
-def is_number(x):
+def is_int(x):
     """Check whether parameter is an integer."""
     try:
         _ = int(x)
+    except TypeError:
+        return False
+    except ValueError:
+        return False
+    return True
+
+
+def is_number(x):
+    """Check whether parameter is a number."""
+    try:
+        _ = float(x)
     except TypeError:
         return False
     except ValueError:
@@ -210,7 +221,7 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,mins
                """
     conditions = []
     parameters = []
-    if is_number(mintl):
+    if is_int(mintl):
         conditions.append("resources.tl >= ?")
         parameters.append(mintl)
     if name != None and name != '':
@@ -229,37 +240,37 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,mins
         sector = "%%%s%%" % sector
         conditions.append("surveys.sector_name like ?")
         parameters.append(sector)
-    if is_number(minsecx):
+    if is_int(minsecx):
         conditions.append("surveys.sector_x >= ?")
         parameters.append(minsecx)
-    if is_number(minsecy):
+    if is_int(minsecy):
         conditions.append("surveys.sector_y >= ?")
         parameters.append(minsecy)
-    if is_number(minsecz):
+    if is_int(minsecz):
         conditions.append("surveys.sector_z >= ?")
         parameters.append(minsecz)
-    if is_number(maxsecx):
+    if is_int(maxsecx):
         conditions.append("surveys.sector_x <= ?")
         parameters.append(maxsecx)
-    if is_number(maxsecy):
+    if is_int(maxsecy):
         conditions.append("surveys.sector_y <= ?")
         parameters.append(maxsecy)
-    if is_number(maxsecz):
+    if is_int(maxsecz):
         conditions.append("surveys.sector_z <= ?")
         parameters.append(maxsecz)
-    if is_number(radius):
+    if is_int(radius):
         radius = int(radius)
-        if is_number(centerx):
+        if is_int(centerx):
             conditions.append("surveys.sector_x <= ?")
             conditions.append("surveys.sector_x >= ?")
             parameters.append(int(centerx)+radius)
             parameters.append(int(centerx)-radius)
-        if is_number(centery):
+        if is_int(centery):
             conditions.append("surveys.sector_y <= ?")
             conditions.append("surveys.sector_y >= ?")
             parameters.append(int(centery)+radius)
             parameters.append(int(centery)-radius)
-        if is_number(centerz):
+        if is_int(centerz):
             conditions.append("surveys.sector_z <= ?")
             conditions.append("surveys.sector_z >= ?")
             parameters.append(int(centerz)+radius)
