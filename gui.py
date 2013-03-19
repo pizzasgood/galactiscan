@@ -286,8 +286,11 @@ class Galactiscan(wx.Frame):
         panel.SetSizer(main_vbox)
 
 
-        #boxes to query name and tl
+        #add the search controls
         self.search_controls = SearchControls(panel)
+        main_vbox.Add(self.search_controls, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
+
+        #bind the search controls
         self.Bind(wx.EVT_BUTTON, self.OnReset,  id=self.search_controls.GetResetButtonId())
         self.Bind(wx.EVT_BUTTON, self.OnSearch, id=self.search_controls.GetSearchButtonId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetNameFieldId())
@@ -301,7 +304,6 @@ class Galactiscan(wx.Frame):
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecxFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecyFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxseczFieldId())
-        main_vbox.Add(self.search_controls, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
 
 
         #the main viewing area
