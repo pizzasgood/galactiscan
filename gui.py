@@ -70,63 +70,88 @@ class SearchControls(wx.BoxSizer):
     def __init__(self, parent):
         wx.BoxSizer.__init__(self, wx.VERTICAL)
 
-        name_l = wx.StaticText(parent, label="Name")
+        name_l = wx.StaticText(parent, label="Name:")
         self.name_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        tl_l = wx.StaticText(parent, label="Min TL")
+        tl_l = wx.StaticText(parent, label="Min TL:")
         self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        planet_l = wx.StaticText(parent, label="Planet")
+        planet_l = wx.StaticText(parent, label="Planet:")
         self.planet_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        system_l = wx.StaticText(parent, label="System")
+        system_l = wx.StaticText(parent, label="System:")
         self.system_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        sector_l = wx.StaticText(parent, label="Sector")
+        sector_l = wx.StaticText(parent, label="Sector:")
         self.sector_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        minsecx_l = wx.StaticText(parent, label="Min X")
+        minsec_l = wx.StaticText(parent, label="Min Sec:")
         self.minsecx_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        minsecy_l = wx.StaticText(parent, label="Min Y")
         self.minsecy_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        minsecz_l = wx.StaticText(parent, label="Min Z")
         self.minsecz_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        maxsecx_l = wx.StaticText(parent, label="Max X")
+        maxsec_l = wx.StaticText(parent, label="Max Sec:")
         self.maxsecx_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        maxsecy_l = wx.StaticText(parent, label="Max Y")
         self.maxsecy_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        maxsecz_l = wx.StaticText(parent, label="Max Z")
         self.maxsecz_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        center_l = wx.StaticText(parent, label="Center Coords:")
+        self.centerx_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        self.centery_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        self.centerz_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        radius_l = wx.StaticText(parent, label="Search Radius:")
+        self.radius_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
 
         self.search_button = wx.Button(parent, label="Search")
 
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         hbox3 = wx.BoxSizer(wx.HORIZONTAL)
-        self.Add(hbox1, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
-        self.Add(hbox2, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
-        self.Add(hbox3, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
+        vbox_coords_ls = wx.BoxSizer(wx.VERTICAL)
+        vbox_coords = wx.BoxSizer(wx.VERTICAL)
+        vbox_radius = wx.BoxSizer(wx.VERTICAL)
+        hbox_minsec = wx.BoxSizer(wx.HORIZONTAL)
+        hbox_maxsec = wx.BoxSizer(wx.HORIZONTAL)
+        hbox_center = wx.BoxSizer(wx.HORIZONTAL)
+        hbox_radius = wx.BoxSizer(wx.HORIZONTAL)
 
-        hbox1.Add(name_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(self.name_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(tl_l,               proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(self.tl_field,      proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        self.Add(hbox1, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+        self.Add(hbox2, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+        self.Add(hbox3, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
 
-        hbox2.Add(planet_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox2.Add(self.planet_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox2.Add(system_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox2.Add(self.system_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox2.Add(sector_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox2.Add(self.sector_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox3.Add(vbox_coords_ls, proportion=0, flag=wx.LEFT, border=5)
+        hbox3.Add(vbox_coords,    proportion=1)
+        hbox3.Add(vbox_radius,    proportion=2)
 
-        hbox3.Add(minsecx_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(self.minsecx_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(minsecy_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(self.minsecy_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(minsecz_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(self.minsecz_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(maxsecx_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(self.maxsecx_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(maxsecy_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(self.maxsecy_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(maxsecz_l,             proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox3.Add(self.maxsecz_field,    proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        vbox_coords.Add(hbox_minsec, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+        vbox_coords.Add(hbox_maxsec, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+        vbox_radius.Add(hbox_center, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+        vbox_radius.Add(hbox_radius, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+
+        hbox1.Add(name_l,            proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.name_field,   proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(tl_l,              proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.tl_field,     proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        hbox2.Add(planet_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(self.planet_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(system_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(self.system_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(sector_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox2.Add(self.sector_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        vbox_coords_ls.Add(minsec_l, proportion=1, flag=wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, border=5)
+        vbox_coords_ls.Add(maxsec_l, proportion=1, flag=wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, border=5)
+
+        hbox_minsec.Add(self.minsecx_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_minsec.Add(self.minsecy_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_minsec.Add(self.minsecz_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        hbox_maxsec.Add(self.maxsecx_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_maxsec.Add(self.maxsecy_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_maxsec.Add(self.maxsecz_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        hbox_center.Add(center_l,           proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_center.Add(self.centerx_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_center.Add(self.centery_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_center.Add(self.centerz_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        hbox_radius.Add(radius_l,           proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_radius.Add(self.radius_field,  proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_radius.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
 
     def GetNameFieldId(self):
@@ -162,6 +187,18 @@ class SearchControls(wx.BoxSizer):
     def GetMaxseczFieldId(self):
         return self.maxsecz_field.GetId()
 
+    def GetCenterxFieldId(self):
+        return self.centerx_field.GetId()
+
+    def GetCenteryFieldId(self):
+        return self.centery_field.GetId()
+
+    def GetCenterzFieldId(self):
+        return self.centerz_field.GetId()
+
+    def GetRadiusFieldId(self):
+        return self.center_field.GetId()
+
     def GetSearchButtonId(self):
         return self.search_button.GetId()
 
@@ -185,8 +222,18 @@ class Galactiscan(wx.Frame):
         maxsecx = self.search_controls.maxsecx_field.GetValue()
         maxsecy = self.search_controls.maxsecy_field.GetValue()
         maxsecz = self.search_controls.maxsecz_field.GetValue()
+        centerx = self.search_controls.centerx_field.GetValue()
+        centery = self.search_controls.centery_field.GetValue()
+        centerz = self.search_controls.centerz_field.GetValue()
+        radius = self.search_controls.radius_field.GetValue()
         if name+tl+planet+system+sector != '':
-            rows = data.find_resources(name=name, mintl=tl, planet=planet, system=system, sector=sector, minsecx=minsecx, minsecy=minsecy, minsecz=minsecz, maxsecx=maxsecx, maxsecy=maxsecy, maxsecz=maxsecz)
+            rows = data.find_resources(name=name, mintl=tl,
+                                       planet=planet, system=system, sector=sector,
+                                       minsecx=minsecx, minsecy=minsecy, minsecz=minsecz,
+                                       maxsecx=maxsecx, maxsecy=maxsecy, maxsecz=maxsecz,
+                                       centerx=centerx, centery=centery, centerz=centerz,
+                                       radius=radius,
+                                      )
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
 

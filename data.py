@@ -194,7 +194,7 @@ def is_number(x):
     return True
 
 
-def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None):
+def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None,centerx=None,centery=None,centerz=None,radius=None):
     """Find resources matching parameters and return as list of dictionaries."""
     query = """SELECT resources.name,
                       resources.tl,
@@ -247,6 +247,23 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,mins
     if is_number(maxsecz):
         conditions.append("surveys.sector_z <= ?")
         parameters.append(maxsecz)
+    if is_number(radius):
+        radius = int(radius)
+        if is_number(centerx):
+            conditions.append("surveys.sector_x <= ?")
+            conditions.append("surveys.sector_x >= ?")
+            parameters.append(int(centerx)+radius)
+            parameters.append(int(centerx)-radius)
+        if is_number(centery):
+            conditions.append("surveys.sector_y <= ?")
+            conditions.append("surveys.sector_y >= ?")
+            parameters.append(int(centery)+radius)
+            parameters.append(int(centery)-radius)
+        if is_number(centerz):
+            conditions.append("surveys.sector_z <= ?")
+            conditions.append("surveys.sector_z >= ?")
+            parameters.append(int(centerz)+radius)
+            parameters.append(int(centerz)-radius)
 
     query += "WHERE " + " AND ".join(conditions) + " "
 
