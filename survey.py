@@ -113,8 +113,13 @@ class Location:
     def __init__(self, sys_str, sec_str):
         self.system_coords = Coords(sys_str)
         self.sector_coords = Coords(sec_str)
-        self.system_name = sys_str[0:sys_str.rfind('S')].strip()
+        self.system_name = sys_str[0:sys_str.rfind('(')].strip()
+        words = self.system_name.split()
+        if words[-1] == 'System':
+            self.system_name = self.system_name[0:self.system_name.rfind('S')].strip()
         self.sector_name = sec_str[0:sec_str.rfind('S')].strip()
+        if len(self.sector_name) == 0:
+            self.sector_name = sec_str.strip()
         self.universal_coords = UniversalCoords(self.system_coords, self.sector_coords)
 
     def __repr__(self):
