@@ -67,7 +67,7 @@ class ResultListCtrl(SortedListCtrl):
 
 
 class SearchControls(wx.BoxSizer):
-    def __init__(self, parent):
+    def __init__(self, parent, grandparent):
         wx.BoxSizer.__init__(self, wx.VERTICAL)
 
         name_l = wx.StaticText(parent, label="Name:")
@@ -155,57 +155,24 @@ class SearchControls(wx.BoxSizer):
         hbox_radius.Add(self.reset_button,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox_radius.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
-
-    def GetNameFieldId(self):
-        return self.name_field.GetId()
-
-    def GetTlFieldId(self):
-        return self.tl_field.GetId()
-
-    def GetPlanetFieldId(self):
-        return self.planet_field.GetId()
-
-    def GetSystemFieldId(self):
-        return self.system_field.GetId()
-
-    def GetSectorFieldId(self):
-        return self.sector_field.GetId()
-
-    def GetMinsecxFieldId(self):
-        return self.minsecx_field.GetId()
-
-    def GetMinsecyFieldId(self):
-        return self.minsecy_field.GetId()
-
-    def GetMinseczFieldId(self):
-        return self.minsecz_field.GetId()
-
-    def GetMaxsecxFieldId(self):
-        return self.maxsecx_field.GetId()
-
-    def GetMaxsecyFieldId(self):
-        return self.maxsecy_field.GetId()
-
-    def GetMaxseczFieldId(self):
-        return self.maxsecz_field.GetId()
-
-    def GetCenterxFieldId(self):
-        return self.centerx_field.GetId()
-
-    def GetCenteryFieldId(self):
-        return self.centery_field.GetId()
-
-    def GetCenterzFieldId(self):
-        return self.centerz_field.GetId()
-
-    def GetRadiusFieldId(self):
-        return self.center_field.GetId()
-
-    def GetResetButtonId(self):
-        return self.reset_button.GetId()
-
-    def GetSearchButtonId(self):
-        return self.search_button.GetId()
+        #bind the search controls
+        grandparent.Bind(wx.EVT_BUTTON, grandparent.OnReset,  id=self.reset_button.GetId())
+        grandparent.Bind(wx.EVT_BUTTON, grandparent.OnSearch, id=self.search_button.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.name_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.tl_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.planet_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.system_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.sector_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.minsecx_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.minsecy_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.minsecz_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.maxsecx_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.maxsecy_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.maxsecz_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.centerx_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.centery_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.centerz_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.radius_field.GetId())
 
 
 
@@ -308,23 +275,8 @@ class Galactiscan(wx.Frame):
 
 
         #add the search controls
-        self.search_controls = SearchControls(panel)
+        self.search_controls = SearchControls(panel, self)
         main_vbox.Add(self.search_controls, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
-
-        #bind the search controls
-        self.Bind(wx.EVT_BUTTON, self.OnReset,  id=self.search_controls.GetResetButtonId())
-        self.Bind(wx.EVT_BUTTON, self.OnSearch, id=self.search_controls.GetSearchButtonId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetNameFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetTlFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetPlanetFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetSystemFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetSectorFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMinsecxFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMinsecyFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMinseczFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecxFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecyFieldId())
-        self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxseczFieldId())
 
 
         #the status bar
