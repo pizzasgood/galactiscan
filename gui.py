@@ -299,6 +299,14 @@ class Galactiscan(wx.Frame):
         panel.SetSizer(main_vbox)
 
 
+        #the main viewing area
+        stuff = {
+            0 : ('', '', '', '', '', '', '', '', '', ''),
+            }
+        self.list = ResultListCtrl(panel, stuff)
+        main_vbox.Add(self.list, proportion=1, flag=wx.EXPAND)
+
+
         #add the search controls
         self.search_controls = SearchControls(panel)
         main_vbox.Add(self.search_controls, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
@@ -317,14 +325,6 @@ class Galactiscan(wx.Frame):
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecxFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxsecyFieldId())
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearch, id=self.search_controls.GetMaxseczFieldId())
-
-
-        #the main viewing area
-        stuff = {
-            0 : ('', '', '', '', '', '', '', '', '', ''),
-            }
-        self.list = ResultListCtrl(panel, stuff)
-        main_vbox.Add(self.list, proportion=1, flag=wx.EXPAND)
 
 
         #the status bar
