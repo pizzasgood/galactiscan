@@ -259,6 +259,16 @@ class Galactiscan(wx.Frame):
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
 
+    def OpenFile(self, e):
+        dialog = wx.FileDialog(self, message="Please select the files you wish to load.", style=wx.FD_OPEN|wx.FD_MULTIPLE|wx.FD_FILE_MUST_EXIST)
+        if dialog.ShowModal() == wx.ID_OK:
+            paths = dialog.GetPaths()
+            self.status.SetStatusText("Now loading %s files..." % len(paths))
+            data.add_files(paths)
+            self.status.SetStatusText("%s files loaded" % len(paths))
+        else:
+            self.status.SetStatusText("no files loaded")
+
     def ClearDatabase(self, e):
         data.drop_tables()
         self.status.SetStatusText("Database cleared")
@@ -269,6 +279,9 @@ class Galactiscan(wx.Frame):
         menubar = wx.MenuBar()
 
         fileMenu = wx.Menu()
+
+        fitem = fileMenu.Append(wx.ID_OPEN, 'Open', 'Open File(s)')
+        self.Bind(wx.EVT_MENU, self.OpenFile, fitem)
 
         fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
         self.Bind(wx.EVT_MENU, self.ClearDatabase, fitem)
