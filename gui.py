@@ -174,7 +174,7 @@ class SearchControls(wx.BoxSizer):
         hbox_radius.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
         #bind the search controls
-        grandparent.Bind(wx.EVT_BUTTON, grandparent.OnReset,  id=self.reset_button.GetId())
+        grandparent.Bind(wx.EVT_BUTTON, self.OnReset,  id=self.reset_button.GetId())
         grandparent.Bind(wx.EVT_BUTTON, grandparent.OnSearch, id=self.search_button.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.name_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.tl_field.GetId())
@@ -192,6 +192,23 @@ class SearchControls(wx.BoxSizer):
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.centerz_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.radius_field.GetId())
 
+    def OnReset(self, e):
+        self.name_field.SetValue("")
+        self.tl_field.SetValue("")
+        self.planet_field.SetValue("")
+        self.system_field.SetValue("")
+        self.sector_field.SetValue("")
+        self.minsecx_field.SetValue("")
+        self.minsecy_field.SetValue("")
+        self.minsecz_field.SetValue("")
+        self.maxsecx_field.SetValue("")
+        self.maxsecy_field.SetValue("")
+        self.maxsecz_field.SetValue("")
+        self.centerx_field.SetValue("")
+        self.centery_field.SetValue("")
+        self.centerz_field.SetValue("")
+        self.radius_field.SetValue("")
+
 
 
 class Galactiscan(wx.Frame):
@@ -199,23 +216,6 @@ class Galactiscan(wx.Frame):
         super(Galactiscan, self).__init__(*args, **kwargs)
 
         self.InitUI()
-
-    def OnReset(self, e):
-        self.search_controls.name_field.SetValue("")
-        self.search_controls.tl_field.SetValue("")
-        self.search_controls.planet_field.SetValue("")
-        self.search_controls.system_field.SetValue("")
-        self.search_controls.sector_field.SetValue("")
-        self.search_controls.minsecx_field.SetValue("")
-        self.search_controls.minsecy_field.SetValue("")
-        self.search_controls.minsecz_field.SetValue("")
-        self.search_controls.maxsecx_field.SetValue("")
-        self.search_controls.maxsecy_field.SetValue("")
-        self.search_controls.maxsecz_field.SetValue("")
-        self.search_controls.centerx_field.SetValue("")
-        self.search_controls.centery_field.SetValue("")
-        self.search_controls.centerz_field.SetValue("")
-        self.search_controls.radius_field.SetValue("")
 
     def OnSearch(self, e):
         name = self.search_controls.name_field.GetValue()
