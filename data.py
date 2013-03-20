@@ -184,20 +184,32 @@ def delete_survey(survey_id):
 
 
 def add_text(text):
-    """Add the surveys in the text to the database."""
+    """
+    Add the surveys in the text to the database.
+
+    Returns total number of surveys added.
+    """
     create_tables()
     surveys = survey.process_survey(text)
     for s in surveys:
         save_survey(s)
+    return len(surveys)
 
 
 def add_files(files):
-    """Add the surveys in the array of files to the database."""
+    """
+    Add the surveys in the array of files to the database.
+
+    Returns total number of surveys added.
+    """
+    count = 0
     create_tables()
     for f in files:
         surveys = survey.process_survey_file(f)
         for s in surveys:
             save_survey(s)
+        count += len(surveys)
+    return count
 
 
 

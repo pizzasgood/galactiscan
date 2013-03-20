@@ -248,14 +248,14 @@ class Galactiscan(wx.Frame):
             self.status.SetStatusText("%d resources found" % len(rows))
 
     def OpenFile(self, e):
-        dialog = wx.FileDialog(self, message="Please select the files you wish to load.", style=wx.FD_OPEN|wx.FD_MULTIPLE|wx.FD_FILE_MUST_EXIST)
+        dialog = wx.FileDialog(self, message="Please select the files you wish to process.", style=wx.FD_OPEN|wx.FD_MULTIPLE|wx.FD_FILE_MUST_EXIST)
         if dialog.ShowModal() == wx.ID_OK:
             paths = dialog.GetPaths()
-            self.status.SetStatusText("Now loading %s files..." % len(paths))
-            data.add_files(paths)
-            self.status.SetStatusText("%s files loaded" % len(paths))
+            self.status.SetStatusText("Now processing %s files..." % len(paths))
+            count = data.add_files(paths)
+            self.status.SetStatusText("%s surveys added" % count)
         else:
-            self.status.SetStatusText("no files loaded")
+            self.status.SetStatusText("no surveys added")
 
     def ClearDatabase(self, e):
         self.status.SetStatusText("Clearing database...")
@@ -275,8 +275,8 @@ class Galactiscan(wx.Frame):
             self.status.SetStatusText("Processing clipboard...")
             data_object = wx.TextDataObject()
             wx.TheClipboard.GetData(data_object)
-            data.add_text(data_object.GetText())
-            self.status.SetStatusText("Database updated from clipboard")
+            count = data.add_text(data_object.GetText())
+            self.status.SetStatusText("%s surveys added from clipboard" % count)
         else:
             self.status.SetStatusText("Text is not supported by the clipboard")
 
