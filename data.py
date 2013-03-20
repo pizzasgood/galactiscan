@@ -183,6 +183,16 @@ def delete_survey(survey_id):
     con.close()
 
 
+def add_files(files):
+    """Add the surveys in the array of files to the database."""
+    create_tables()
+    for f in files:
+        surveys = survey.process_survey_file(f)
+        for s in surveys:
+            save_survey(s)
+
+
+
 def is_int(x):
     """Check whether parameter is an integer."""
     try:

@@ -25,13 +25,6 @@ Options:
 """
     exit(ret)
 
-def add_files(files):
-    data.create_tables()
-    for f in files:
-        surveys = survey.process_survey_file(f)
-        for s in surveys:
-            data.save_survey(s)
-
 files = []
 
 if len(sys.argv) > 1:
@@ -90,7 +83,7 @@ if len(sys.argv) > 1:
 
     #add any files that were specified
     if len(files) > 0:
-        add_files(files)
+        data.add_files(files)
 
 else:
     gui.main()
