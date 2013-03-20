@@ -255,6 +255,7 @@ class Galactiscan(wx.Frame):
             self.status.SetStatusText("no files loaded")
 
     def ClearDatabase(self, e):
+        self.status.SetStatusText("Clearing database...")
         data.drop_tables()
         self.status.SetStatusText("Database cleared")
 
