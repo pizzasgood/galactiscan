@@ -73,14 +73,17 @@ class Toolbar(wx.BoxSizer):
         #create the buttons
         self.open_button = wx.Button(parent, id=wx.ID_OPEN, style=wx.BU_EXACTFIT)
         self.clear_button = wx.Button(parent, id=wx.ID_CLEAR, style=wx.BU_EXACTFIT)
+        self.paste_button = wx.Button(parent, id=wx.ID_PASTE, style=wx.BU_EXACTFIT)
 
         #add the buttons to the widget
         self.Add(self.open_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
         self.Add(self.clear_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
+        self.Add(self.paste_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
 
         #bind the buttons to actions
         grandparent.Bind(wx.EVT_BUTTON, grandparent.OpenFile,  id=self.open_button.GetId())
         grandparent.Bind(wx.EVT_BUTTON, grandparent.ClearDatabase,  id=self.clear_button.GetId())
+        grandparent.Bind(wx.EVT_BUTTON, grandparent.OnPaste,  id=self.paste_button.GetId())
 
 
 
@@ -258,6 +261,26 @@ class Galactiscan(wx.Frame):
         self.status.SetStatusText("Clearing database...")
         data.drop_tables()
         self.status.SetStatusText("Database cleared")
+
+    def OnPaste(self, e):
+        if not wx.TheClipboard.Open():
+            #maybe it is already open, so close it and try again
+            wx.TheClipboard.Close()
+            if not wx.TheClipboard.Open():
+                #give up
+                self.status.SetStatusText("Could not open clipboard")
+                return
+
+        if wx.TheClipboard.IsSupported(wx.DataFormat(wx.DF_TEXT)):
+            self.status.SetStatusText("Processing clipboard...")
+            data_object = wx.TextDataObject()
+            wx.TheClipboard.GetData(data_object)
+            data.add_text(data_object.GetText())
+            self.status.SetStatusText("Database updated from clipboard")
+        else:
+            self.status.SetStatusText("Text is not supported by the clipboard")
+
+        wx.TheClipboard.Close()
 
     def InitUI(self):
         self.SetTitle('Galactiscan')
