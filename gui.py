@@ -66,6 +66,24 @@ class ResultListCtrl(SortedListCtrl):
 
 
 
+class Toolbar(wx.BoxSizer):
+    def __init__(self, parent, grandparent):
+        wx.BoxSizer.__init__(self, wx.HORIZONTAL)
+
+        #create the buttons
+        self.open_button = wx.Button(parent, id=wx.ID_OPEN, style=wx.BU_EXACTFIT)
+        self.clear_button = wx.Button(parent, id=wx.ID_CLEAR, style=wx.BU_EXACTFIT)
+
+        #add the buttons to the widget
+        self.Add(self.open_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
+        self.Add(self.clear_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
+
+        #bind the buttons to actions
+        grandparent.Bind(wx.EVT_BUTTON, grandparent.OpenFile,  id=self.open_button.GetId())
+        grandparent.Bind(wx.EVT_BUTTON, grandparent.ClearDatabase,  id=self.clear_button.GetId())
+
+
+
 class SearchControls(wx.BoxSizer):
     def __init__(self, parent, grandparent):
         wx.BoxSizer.__init__(self, wx.VERTICAL)
@@ -264,6 +282,11 @@ class Galactiscan(wx.Frame):
         panel = wx.Panel(self)
         main_vbox = wx.BoxSizer(wx.VERTICAL)
         panel.SetSizer(main_vbox)
+
+
+        #add the toolbar
+        self.toolbar = Toolbar(panel, self)
+        main_vbox.Add(self.toolbar, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND, border=0)
 
 
         #the main viewing area
