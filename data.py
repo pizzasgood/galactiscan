@@ -183,6 +183,14 @@ def delete_survey(survey_id):
     con.close()
 
 
+def add_text(text):
+    """Add the surveys in the text to the database."""
+    create_tables()
+    surveys = survey.process_survey(text)
+    for s in surveys:
+        save_survey(s)
+
+
 def add_files(files):
     """Add the surveys in the array of files to the database."""
     create_tables()
