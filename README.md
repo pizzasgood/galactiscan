@@ -1,7 +1,7 @@
 Galactiscan
 ===========
 
-A tool for maintaining and querying a database of survey scans from Shores of Hazeron.
+A tool for maintaining and querying a database of survey scans from [Shores of Hazeron](http://www.hazeron.com/).
 
 **Warning**:  This software is still in Alpha.  It is still very much under development and may have bugs, inadequate documentation, missing features, offensive typos, sudden radical changes between versions, and who knows what else.  Also, it is currently only being developed and tested in Linux.  It *should* work in any OS that supports Python, Sqlite3, and wxWidgets, however.
 
