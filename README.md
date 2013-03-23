@@ -7,6 +7,13 @@ A tool for maintaining and querying a database of survey scans from [Shores of H
 
 
 
+License
+-------
+
+This program is distributed under the GNU General Public License.  See the file LICENSE for more details.
+
+
+
 Dependencies
 ------------
 
