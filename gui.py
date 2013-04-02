@@ -284,6 +284,7 @@ class Galactiscan(wx.Frame):
 
     def InitUI(self):
         self.SetTitle('Galactiscan')
+        self.SetSize((1000,400))
 
         menubar = wx.MenuBar()
 
