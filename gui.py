@@ -282,9 +282,23 @@ class Galactiscan(wx.Frame):
 
         wx.TheClipboard.Close()
 
+    def OnResize(self, e):
+        #save the new dimensions
+        wx.Config.Get().WriteInt('/window/width', e.GetSize()[0])
+        wx.Config.Get().WriteInt('/window/height', e.GetSize()[1])
+
+        #allow normal event code to run
+        e.Skip()
+
     def InitUI(self):
         self.SetTitle('Galactiscan')
-        self.SetSize((1000,400))
+        if wx.Config.Get().HasEntry('/window/width'):
+            size = (wx.Config.Get().ReadInt('/window/width'), wx.Config.Get().ReadInt('/window/height'))
+        else:
+            size = (1000, 400)
+        self.SetSize(size)
+
+        self.Bind(wx.EVT_SIZE, self.OnResize, self)
 
         menubar = wx.MenuBar()
 
@@ -342,6 +356,7 @@ class Galactiscan(wx.Frame):
 
 def main():
     gs = wx.App()
+    gs.SetAppName('galactiscan')
     Galactiscan(None)
     gs.MainLoop()
 
