@@ -1,5 +1,6 @@
 # vim: ts=4 : sts=4 : sw=4 : et :
 
+import wx
 import survey
 import sqlite3
 import datetime, time
@@ -11,12 +12,19 @@ def adapt_datetime(ts):
 sqlite3.register_adapter(datetime.datetime, adapt_datetime)
 
 
-db_name = 'database.sqlite3'
 
+def get_database_path():
+    database_path = 'database.sqlite3'
+    if wx.Config.Get().HasEntry('/database/name'):
+        database_path = wx.Config.Get().Read('/database/name')
+    return database_path
+
+def set_database_path(database_path):
+    wx.Config.Get().Write('/database/name', database_path)
 
 def get_con():
     """Get connection to database."""
-    con = sqlite3.connect('database.sqlite3')
+    con = sqlite3.connect(get_database_path())
     con.row_factory = sqlite3.Row
     return con
 

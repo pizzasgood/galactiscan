@@ -72,6 +72,9 @@ class Menubar(wx.MenuBar):
 
         fileMenu = wx.Menu()
 
+        fitem = fileMenu.Append(wx.ID_OPEN, 'Define DB', 'Define Database')
+        parent.Bind(wx.EVT_MENU, parent.DefineDatabase, fitem)
+
         fitem = fileMenu.Append(wx.ID_ADD, 'Add', 'Add Surveys From File(s)')
         parent.Bind(wx.EVT_MENU, parent.AddFile, fitem)
 
@@ -266,6 +269,22 @@ class Galactiscan(wx.Frame):
                                       )
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
+
+    def DefineDatabase(self, e):
+        last_path = os.path.abspath(data.get_database_path())
+        last_dir, last_file = os.path.split(last_path)
+        dialog = wx.FileDialog(self, message="Please select the file you wish to use.",
+                                     style=wx.FD_SAVE,
+                                     defaultDir=last_dir,
+                                     defaultFile=last_file,
+                                     wildcard='Database files (*.sqlite3)|*.sqlite3|All files|*',
+                                     )
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+            data.set_database_path(path)
+            self.status.SetStatusText("Database set to %s" % path)
+        else:
+            self.status.SetStatusText("Database unchanged (%s)" % last_path)
 
     def AddFile(self, e):
         dialog = wx.FileDialog(self, message="Please select the files you wish to process.", style=wx.FD_OPEN|wx.FD_MULTIPLE|wx.FD_FILE_MUST_EXIST)
