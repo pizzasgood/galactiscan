@@ -75,9 +75,6 @@ class Menubar(wx.MenuBar):
         fitem = fileMenu.Append(wx.ID_OPEN, 'Define DB', 'Define Database')
         parent.Bind(wx.EVT_MENU, parent.DefineDatabase, fitem)
 
-        fitem = fileMenu.Append(wx.ID_ADD, 'Add', 'Add Surveys From File(s)')
-        parent.Bind(wx.EVT_MENU, parent.AddFile, fitem)
-
         fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
         self.Bind(wx.EVT_MENU, parent.ClearDatabase, fitem)
 
@@ -95,17 +92,14 @@ class Toolbar(wx.BoxSizer):
 
         #create the buttons
         self.add_button = wx.Button(parent, id=wx.ID_ADD, style=wx.BU_EXACTFIT)
-        self.clear_button = wx.Button(parent, id=wx.ID_CLEAR, style=wx.BU_EXACTFIT)
         self.paste_button = wx.Button(parent, id=wx.ID_PASTE, style=wx.BU_EXACTFIT)
 
         #add the buttons to the widget
         self.Add(self.add_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
-        self.Add(self.clear_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
         self.Add(self.paste_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
 
         #bind the buttons to actions
         grandparent.Bind(wx.EVT_BUTTON, grandparent.AddFile,  id=self.add_button.GetId())
-        grandparent.Bind(wx.EVT_BUTTON, grandparent.ClearDatabase,  id=self.clear_button.GetId())
         grandparent.Bind(wx.EVT_BUTTON, grandparent.OnPaste,  id=self.paste_button.GetId())
 
 
