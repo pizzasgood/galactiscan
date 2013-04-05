@@ -30,7 +30,7 @@ Dependencies
 Installation
 ------------
 
-You don't install Galactiscan, currently.  Just check out the repository, stick it wherever, and run galactiscan.py out of the current directory.  Please do not simply click on it, as it currently saves data to whatever the current directory is.  If you simply click it, the current directory might be / or C:\ or someplace equally silly.  Yes, I'll fix that soon, but for now either make a wrapper script to launch it, or launch it from the terminal.
+You don't install Galactiscan, currently.  Just check out the repository, stick it wherever, and run galactiscan.py using python2.  You'll need to go to "File -> Define DB" the first time you run it, and select a location to save the database file (which is a generic sqlite3 database, fyi).  Your choice will be remembered and used automatically from then on.  Otherwise it will just use 'database.sqlite3' in the local directory, which may not be what you want.
 
 Someday it will have an optional installer, but that is low priority right now.
 
@@ -39,13 +39,13 @@ Someday it will have an optional installer, but that is low priority right now.
 Adding Data
 -----------
 
-You can add data in a few ways.  The simplest is to copy the survey report right out of the game, and then click the "Paste" toolbar button on Galactiscan.  You can also use the "Open" button to load data directly out of a text file.  Note that you can open multiple files in one go, by holding the Ctrl key while selecting them.  Galactiscan will also happily load files that contain multiple concatinated reports.  Finally, you can add files from the commandline, like so:
+You can add data in a few ways.  The simplest is to copy the survey report right out of the game, and then click the "Paste" toolbar button on Galactiscan.  You can also use the "Add" button to load data directly out of a text file.  Note that you can add multiple files in one go, by holding the Ctrl key while selecting them.  Galactiscan will also happily load files that contain multiple concatinated reports.  Finally, you can add files from the commandline, like so:
 
 `./galactiscan.py /path/to/some/file.txt /path/to/other/file.txt`
 
-The data will be saved in an sqlite3 database in the current directory, named database.sqlite3, and automatically loaded from then on.  Only the single database is supported for now, so if you want multiple databases you'll have to do it by manually juggling the files or launching Galactiscan from different directories.
+The data will be saved in an sqlite3 database at whatever location you defined, and automatically loaded from then on.  If you want to switch databases on the fly, just go to "File -> Define DB" and select a new one.  The old database will be unloaded and the new one loaded.  If you define a file that doesn't exist, an empty one will be created.
 
-You can delete everything in the database by using the "Clear" button.  There is no undo yet, so please be careful.
+You can delete everything in the database by using the "File -> Clear" option.  There is no undo yet, so please be careful.
 
 There is currently no way to delete specific subsets of data.  If you really want to do that, you can edit the database file manually using any tool that supports sqlite3.  You can look through the data.py file to understand the schema.
 
@@ -64,9 +64,7 @@ Note also that all coordinate values in the search fieldw should be in sectors, 
 Known Issues
 ------------
 
-Trying to search with an empty database will cause an error.
-
-Trying to load text that isn't a survey report will cause an error.
+Trying to load text that isn't a survey report can cause an error.
 
 Doing a query that pulls up thousands of results can be slow.
 
