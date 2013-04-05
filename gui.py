@@ -66,6 +66,26 @@ class ResultListCtrl(SortedListCtrl):
 
 
 
+class Menubar(wx.MenuBar):
+    def __init__(self, parent):
+        wx.MenuBar.__init__(self)
+
+        fileMenu = wx.Menu()
+
+        fitem = fileMenu.Append(wx.ID_OPEN, 'Open', 'Open File(s)')
+        parent.Bind(wx.EVT_MENU, parent.OpenFile, fitem)
+
+        fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
+        self.Bind(wx.EVT_MENU, parent.ClearDatabase, fitem)
+
+        fitem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit application')
+        parent.Bind(wx.EVT_MENU, parent.OnQuit, fitem)
+
+        self.Append(fileMenu, '&File')
+        parent.SetMenuBar(self)
+
+
+
 class Toolbar(wx.BoxSizer):
     def __init__(self, parent, grandparent):
         wx.BoxSizer.__init__(self, wx.HORIZONTAL)
@@ -300,21 +320,9 @@ class Galactiscan(wx.Frame):
 
         self.Bind(wx.EVT_SIZE, self.OnResize, self)
 
-        menubar = wx.MenuBar()
 
-        fileMenu = wx.Menu()
-
-        fitem = fileMenu.Append(wx.ID_OPEN, 'Open', 'Open File(s)')
-        self.Bind(wx.EVT_MENU, self.OpenFile, fitem)
-
-        fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
-        self.Bind(wx.EVT_MENU, self.ClearDatabase, fitem)
-
-        fitem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit application')
-        self.Bind(wx.EVT_MENU, self.OnQuit, fitem)
-
-        menubar.Append(fileMenu, '&File')
-        self.SetMenuBar(menubar)
+        #set up the menus
+        self.menubar = Menubar(self)
 
 
         #set up the panel
