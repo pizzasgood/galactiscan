@@ -72,8 +72,8 @@ class Menubar(wx.MenuBar):
 
         fileMenu = wx.Menu()
 
-        fitem = fileMenu.Append(wx.ID_OPEN, 'Open', 'Open File(s)')
-        parent.Bind(wx.EVT_MENU, parent.OpenFile, fitem)
+        fitem = fileMenu.Append(wx.ID_ADD, 'Add', 'Add Surveys From File(s)')
+        parent.Bind(wx.EVT_MENU, parent.AddFile, fitem)
 
         fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
         self.Bind(wx.EVT_MENU, parent.ClearDatabase, fitem)
@@ -91,17 +91,17 @@ class Toolbar(wx.BoxSizer):
         wx.BoxSizer.__init__(self, wx.HORIZONTAL)
 
         #create the buttons
-        self.open_button = wx.Button(parent, id=wx.ID_OPEN, style=wx.BU_EXACTFIT)
+        self.add_button = wx.Button(parent, id=wx.ID_ADD, style=wx.BU_EXACTFIT)
         self.clear_button = wx.Button(parent, id=wx.ID_CLEAR, style=wx.BU_EXACTFIT)
         self.paste_button = wx.Button(parent, id=wx.ID_PASTE, style=wx.BU_EXACTFIT)
 
         #add the buttons to the widget
-        self.Add(self.open_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
+        self.Add(self.add_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
         self.Add(self.clear_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
         self.Add(self.paste_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
 
         #bind the buttons to actions
-        grandparent.Bind(wx.EVT_BUTTON, grandparent.OpenFile,  id=self.open_button.GetId())
+        grandparent.Bind(wx.EVT_BUTTON, grandparent.AddFile,  id=self.add_button.GetId())
         grandparent.Bind(wx.EVT_BUTTON, grandparent.ClearDatabase,  id=self.clear_button.GetId())
         grandparent.Bind(wx.EVT_BUTTON, grandparent.OnPaste,  id=self.paste_button.GetId())
 
@@ -267,7 +267,7 @@ class Galactiscan(wx.Frame):
             self.list.SetData(data.format_as_dict(rows))
             self.status.SetStatusText("%d resources found" % len(rows))
 
-    def OpenFile(self, e):
+    def AddFile(self, e):
         dialog = wx.FileDialog(self, message="Please select the files you wish to process.", style=wx.FD_OPEN|wx.FD_MULTIPLE|wx.FD_FILE_MUST_EXIST)
         if dialog.ShowModal() == wx.ID_OK:
             paths = dialog.GetPaths()
