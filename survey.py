@@ -2,6 +2,8 @@
 # vim: ts=4 : sts=4 : sw=4 : et :
 import math
 import datetime
+import dateutil
+import dateutil.parser
 import StringIO
 import re
 
@@ -199,11 +201,11 @@ def process_survey_fh(s):
     lines = s.readlines()
     lines_iter = lines.__iter__()
     for line in lines_iter:
-        if re.match('\d+/\d+/\d+\s+\d+:\d+\s+[AP]M', line):
+        if re.match('^\d+[/.\-]\d+[/.\-]\d+\s+\d+:\d+(:\d+)?(\s+[AP]M)?$', line.strip()):
             systems.append(System())
 
             # Header
-            systems[-1].date = datetime.datetime.strptime(line.strip(), '%m/%d/%y %I:%M %p')
+            systems[-1].date = dateutil.parser.parse(line.strip())
             line = lines_iter.next() #whitespace
             line = lines_iter.next() #officer
             line = lines_iter.next() #activity
