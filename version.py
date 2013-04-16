@@ -3,6 +3,7 @@
 
 name = "galactiscan"
 fancy_name = "Galactiscan"
-version = "0.9"
-string = "%s %s" % (name, version)
+number = "0.9"
+string = "%s %s" % (name, number)
+fancy_string = "%s %s" % (fancy_name, number)
 
