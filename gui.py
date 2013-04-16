@@ -12,6 +12,7 @@ from wx.lib.mixins.listctrl import ColumnSorterMixin
 import version
 import survey
 import data
+import about
 
 
 
@@ -72,6 +73,7 @@ class Menubar(wx.MenuBar):
         wx.MenuBar.__init__(self)
 
         fileMenu = wx.Menu()
+        helpMenu = wx.Menu()
 
         fitem = fileMenu.Append(wx.ID_OPEN, 'Define DB', 'Define Database')
         parent.Bind(wx.EVT_MENU, parent.DefineDatabase, fitem)
@@ -82,7 +84,11 @@ class Menubar(wx.MenuBar):
         fitem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit application')
         parent.Bind(wx.EVT_MENU, parent.OnQuit, fitem)
 
+        hitem = helpMenu.Append(wx.ID_ABOUT, 'About', 'About application')
+        parent.Bind(wx.EVT_MENU, parent.ShowAbout, hitem)
+
         self.Append(fileMenu, '&File')
+        self.Append(helpMenu, '&Help')
         parent.SetMenuBar(self)
 
 
@@ -324,6 +330,9 @@ class Galactiscan(wx.Frame):
         #allow normal event code to run
         e.Skip()
 
+    def ShowAbout(self, e):
+        self.about.Show(True)
+
     def InitUI(self):
         self.SetTitle(version.fancy_name)
         if wx.Config.Get().HasEntry('/window/width'):
@@ -337,6 +346,9 @@ class Galactiscan(wx.Frame):
 
         #set up the menus
         self.menubar = Menubar(self)
+
+        #set up the about window
+        self.about = about.AboutWindow(self)
 
 
         #set up the panel
