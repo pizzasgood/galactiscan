@@ -24,28 +24,30 @@ import os.path
 import sys
 import wx
 
+import version
 import survey
 import data
 import gui
 
 def usage(ret = 0):
-    print """galactiscan [-h|--help] <options> [file1 [file2..]]
+    print """%s <options> [file1 [file2..]]
 If neither options nor file parameters are given, open the gui.
 Otherwise, if no options are given, load the files into the database
 
 Options:
-    --help                  shows this message
+    -h, --help              shows this message
+    -v, --version           shows version number
     --clear-db              deletes the database
     --tl <tl> [name]        shows resources >= tl, optionally matching name
     --name <name> [tl]      shows resources matching name, optionally >= tl
     --planet <name> [tl]    shows resources on planet named 'name', optionally >= tl
     --system <name> [tl]    shows resources on system named 'name', optionally >= tl
-"""
+""" % (version.name)
     exit(ret)
 
 
 gs = wx.App()
-gs.SetAppName('galactiscan')
+gs.SetAppName(version.name)
 
 files = []
 
@@ -54,6 +56,8 @@ if len(sys.argv) > 1:
     while i < len(sys.argv):
         if sys.argv[i] == '-h' or sys.argv[i] == '--help':
             usage()
+        elif sys.argv[i] == '-v' or sys.argv[i] == '--version':
+            print version.string
         elif sys.argv[i] == '--clear-db':
             if len(sys.argv) == 2:
                 data.drop_tables()

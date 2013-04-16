@@ -9,6 +9,7 @@ import wx
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 from wx.lib.mixins.listctrl import ColumnSorterMixin
 
+import version
 import survey
 import data
 
@@ -324,7 +325,7 @@ class Galactiscan(wx.Frame):
         e.Skip()
 
     def InitUI(self):
-        self.SetTitle('Galactiscan')
+        self.SetTitle(version.fancy_name)
         if wx.Config.Get().HasEntry('/window/width'):
             size = (wx.Config.Get().ReadInt('/window/width'), wx.Config.Get().ReadInt('/window/height'))
         else:
@@ -366,7 +367,7 @@ class Galactiscan(wx.Frame):
         self.status = wx.StatusBar(panel)
         self.status.SetFieldsCount(1)
         self.status.SetStatusStyles([wx.SB_FLAT])
-        self.status.SetStatusText("Welcome to Galactiscan")
+        self.status.SetStatusText("Welcome to %s" % (version.fancy_name))
         main_vbox.Add(self.status, proportion=0, flag=wx.EXPAND, border=0)
 
 
