@@ -367,7 +367,7 @@ class Galactiscan(wx.Frame):
         self.status = wx.StatusBar(panel)
         self.status.SetFieldsCount(1)
         self.status.SetStatusStyles([wx.SB_FLAT])
-        self.status.SetStatusText("Welcome to %s" % (version.fancy_name))
+        self.status.SetStatusText("Welcome to %s" % (version.fancy_string))
         main_vbox.Add(self.status, proportion=0, flag=wx.EXPAND, border=0)
 
 
