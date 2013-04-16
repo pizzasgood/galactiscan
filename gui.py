@@ -76,7 +76,7 @@ class Menubar(wx.MenuBar):
         parent.Bind(wx.EVT_MENU, parent.DefineDatabase, fitem)
 
         fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
-        self.Bind(wx.EVT_MENU, parent.ClearDatabase, fitem)
+        parent.Bind(wx.EVT_MENU, parent.ClearDatabase, fitem)
 
         fitem = fileMenu.Append(wx.ID_EXIT, 'Quit', 'Quit application')
         parent.Bind(wx.EVT_MENU, parent.OnQuit, fitem)
