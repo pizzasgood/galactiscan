@@ -19,13 +19,9 @@ Dependencies
 
 [Python 2.x](http://www.python.org/)
 
-[pysqlite](https://pypi.python.org/pypi/pysqlite) (this might be bundled with Python, not sure)
-
 [python-dateutil 1.x](http://labix.org/python-dateutil)
 
 [wxPython](http://www.wxpython.org/)
-
-[wxWidgets](http://www.wxwidgets.org/)
 
 
 
