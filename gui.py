@@ -376,8 +376,4 @@ class Galactiscan(wx.Frame):
         self.Close()
 
 def main():
-    gs = wx.App()
-    gs.SetAppName('galactiscan')
     Galactiscan(None)
-    gs.MainLoop()
-

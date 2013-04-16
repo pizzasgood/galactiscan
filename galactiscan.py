@@ -22,6 +22,7 @@ import sqlite3
 import datetime
 import os.path
 import sys
+import wx
 
 import survey
 import data
@@ -41,6 +42,10 @@ Options:
     --system <name> [tl]    shows resources on system named 'name', optionally >= tl
 """
     exit(ret)
+
+
+gs = wx.App()
+gs.SetAppName('galactiscan')
 
 files = []
 
@@ -104,6 +109,7 @@ if len(sys.argv) > 1:
 
 else:
     gui.main()
+    gs.MainLoop()
 
 
 
