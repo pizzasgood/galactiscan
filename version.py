@@ -4,7 +4,7 @@ import os.path
 
 name = "galactiscan"
 fancy_name = "Galactiscan"
-number = "0.9"
+number = "1.0"
 string = "%s %s" % (name, number)
 fancy_string = "%s %s" % (fancy_name, number)
 description = "A tool for maintaining and querying a database of survey scans from Shores of Hazeron."
