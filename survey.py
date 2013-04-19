@@ -201,11 +201,19 @@ def process_survey_fh(s):
     lines = s.readlines()
     lines_iter = lines.__iter__()
     for line in lines_iter:
-        if re.match('^\d+[/.\-]\d+[/.\-]\d+\s+\d+:\d+(:\d+)?(\s+[AP]M)?$', line.strip()):
+        try:
+            if re.match('^[^\s].*\d+:\d+', line):
+                date = dateutil.parser.parse(line.strip())
+            else:
+                date = False
+        except ValueError:
+            date = False
+
+        if date:
             systems.append(System())
 
             # Header
-            systems[-1].date = dateutil.parser.parse(line.strip())
+            systems[-1].date = date
             line = lines_iter.next() #whitespace
             line = lines_iter.next() #officer
             line = lines_iter.next() #activity
