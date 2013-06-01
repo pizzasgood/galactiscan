@@ -375,7 +375,10 @@ def decorate(rows):
         rows[index]['Qual'] = 'Q%03d' % int(row['Qual'])
         rows[index]['Freq'] = '%03d%%' % int(row['Freq'])
         rows[index]['Zone'] = str(row['Zone']+1)
-        rows[index]['Type'] = row['Type'][:row['Type'].rfind(' Zone')]
+        if row['Type']:
+            rows[index]['Type'] = row['Type'][:row['Type'].rfind(' Zone')]
+        else:
+            rows[index]['Type'] = ''
     return rows
 
 
