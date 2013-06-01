@@ -43,12 +43,14 @@ class ResultListCtrl(SortedListCtrl):
         self.InsertColumn(1, 'tl', wx.LIST_FORMAT_RIGHT, 50)
         self.InsertColumn(2, 'quality', wx.LIST_FORMAT_RIGHT, 60)
         self.InsertColumn(3, 'prev', wx.LIST_FORMAT_RIGHT, 60)
-        self.InsertColumn(4, 'type', width=80)
-        self.InsertColumn(5, 'zone', width=50)
-        self.InsertColumn(6, 'world', width=140)
-        self.InsertColumn(7, 'system', width=140)
-        self.InsertColumn(8, 'sector', width=140)
-        self.InsertColumn(9, 'coords', width=80)
+        self.InsertColumn(4, 'diameter', width=80)
+        self.InsertColumn(5, 'kind', width=80)
+        self.InsertColumn(6, 'type', width=80)
+        self.InsertColumn(7, 'zone', width=50)
+        self.InsertColumn(8, 'world', width=140)
+        self.InsertColumn(9, 'system', width=140)
+        self.InsertColumn(10, 'sector', width=140)
+        self.InsertColumn(11, 'coords', width=80)
 
         #insert the data
         self.InsertData(data)
@@ -364,7 +366,7 @@ class Galactiscan(wx.Frame):
 
         #the main viewing area
         stuff = {
-            0 : ('', '', '', '', '', '', '', '', '', ''),
+            0 : ('', '', '', '', '', '', '', '', '', '', '', ''),
             }
         self.list = ResultListCtrl(panel, stuff)
         main_vbox.Add(self.list, proportion=1, flag=wx.EXPAND)
