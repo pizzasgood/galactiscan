@@ -2,8 +2,6 @@
 # vim: ts=4 : sts=4 : sw=4 : et :
 import math
 import datetime
-import dateutil
-import dateutil.parser
 import StringIO
 import re
 from HTMLParser import HTMLParser

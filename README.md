@@ -17,8 +17,6 @@ Dependencies
 
 [Python 2.x](http://www.python.org/)
 
-[python-dateutil 1.x](http://labix.org/python-dateutil)
-
 [wxPython](http://www.wxpython.org/)
 
 
