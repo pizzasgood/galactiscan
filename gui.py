@@ -101,15 +101,15 @@ class Toolbar(wx.BoxSizer):
 
         #create the buttons
         self.add_button = wx.Button(parent, id=wx.ID_ADD, style=wx.BU_EXACTFIT)
-        self.paste_button = wx.Button(parent, id=wx.ID_PASTE, style=wx.BU_EXACTFIT)
+        #self.paste_button = wx.Button(parent, id=wx.ID_PASTE, style=wx.BU_EXACTFIT)
 
         #add the buttons to the widget
         self.Add(self.add_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
-        self.Add(self.paste_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
+        #self.Add(self.paste_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
 
         #bind the buttons to actions
         grandparent.Bind(wx.EVT_BUTTON, grandparent.AddFile,  id=self.add_button.GetId())
-        grandparent.Bind(wx.EVT_BUTTON, grandparent.OnPaste,  id=self.paste_button.GetId())
+        #grandparent.Bind(wx.EVT_BUTTON, grandparent.OnPaste,  id=self.paste_button.GetId())
 
 
 
@@ -304,25 +304,25 @@ class Galactiscan(wx.Frame):
         data.drop_tables()
         self.status.SetStatusText("Database cleared")
 
-    def OnPaste(self, e):
-        if not wx.TheClipboard.Open():
-            #maybe it is already open, so close it and try again
-            wx.TheClipboard.Close()
-            if not wx.TheClipboard.Open():
-                #give up
-                self.status.SetStatusText("Could not open clipboard")
-                return
+    #def OnPaste(self, e):
+    #    if not wx.TheClipboard.Open():
+    #        #maybe it is already open, so close it and try again
+    #        wx.TheClipboard.Close()
+    #        if not wx.TheClipboard.Open():
+    #            #give up
+    #            self.status.SetStatusText("Could not open clipboard")
+    #            return
 
-        if wx.TheClipboard.IsSupported(wx.DataFormat(wx.DF_TEXT)):
-            self.status.SetStatusText("Processing clipboard...")
-            data_object = wx.TextDataObject()
-            wx.TheClipboard.GetData(data_object)
-            count = data.add_text(data_object.GetText())
-            self.status.SetStatusText("%s surveys added from clipboard" % count)
-        else:
-            self.status.SetStatusText("Text is not supported by the clipboard")
+    #    if wx.TheClipboard.IsSupported(wx.DataFormat(wx.DF_TEXT)):
+    #        self.status.SetStatusText("Processing clipboard...")
+    #        data_object = wx.TextDataObject()
+    #        wx.TheClipboard.GetData(data_object)
+    #        count = data.add_text(data_object.GetText())
+    #        self.status.SetStatusText("%s surveys added from clipboard" % count)
+    #    else:
+    #        self.status.SetStatusText("Text is not supported by the clipboard")
 
-        wx.TheClipboard.Close()
+    #    wx.TheClipboard.Close()
 
     def OnResize(self, e):
         #save the new dimensions

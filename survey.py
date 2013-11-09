@@ -6,6 +6,7 @@ import dateutil
 import dateutil.parser
 import StringIO
 import re
+from HTMLParser import HTMLParser
 
 
 class System:
@@ -168,17 +169,24 @@ class Coords:
         return s[lparen+1 : rparen]
 
 
-def process_survey(survey):
-    """Processes survey text 'survey'."""
-    if survey is not None:
-        s = StringIO.StringIO(survey)
-        return process_survey_fh(s)
-
 def process_survey_file(filename):
     """Processes survey file 'filename'."""
     if filename is not None:
-        s = open(filename, 'r')
-        return process_survey_fh(s)
+        encoding = 'utf_16_be'
+        f = open(filename, 'rb')
+        unknown1 = f.read(18)
+        sender_size = int(f.read(1).encode('hex'), 16)
+        sender = f.read(sender_size).decode(encoding)
+        unknown2 = f.read(13)
+        title_size = int(f.read(1).encode('hex'), 16)
+        title = f.read(title_size).decode(encoding)
+        body_size = int(f.read(4).encode('hex'), 16)
+        body = f.read(body_size).decode(encoding)
+        f.close()
+        parser = SurveyHTMLParser()
+        parser.feed(body)
+        parser.close()
+        return ([parser.system])
 
 
 def get_resource_name_from_line(line):
@@ -190,148 +198,137 @@ def get_resource_name_from_line(line):
         resource_name = n2
     return resource_name
 
-def process_survey_fh(s):
-    """Processes survey file that file handler 's' points at."""
 
-    systems = []
+class SurveyHTMLParser(HTMLParser):
+    """Processes survey html. """
 
-    # Celestial bodies
-    mode = 'name'
-    #for line in s.readlines():
-    lines = s.readlines()
-    lines_iter = lines.__iter__()
-    for line in lines_iter:
-        try:
-            if re.match('^[^\s].*\d+:\d+', line):
-                date = dateutil.parser.parse(line.strip())
+    system = None
+    section = 'init'
+    section_header = ''
+    header = ''
+    entering_section_header = False
+    entering_header = False
+
+    tmp_system = None
+    tmp_sector = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'big':
+            self.entering_section_header = True
+        if tag == 'b':
+            self.entering_header = True
+
+    def handle_endtag(self, tag):
+        if tag == 'big':
+            self.entering_section_header = False
+        if tag == 'b':
+            self.entering_header = False
+
+    def handle_data(self, data):
+        data = data.strip()
+        if self.entering_section_header:
+            self.section_header = data
+            if data == 'Wormholes':
+                self.section = 'wormholes'
             else:
-                date = False
-        except ValueError:
-            date = False
-
-        if date:
-            systems.append(System())
-
-            # Header
-            systems[-1].date = date
-            line = lines_iter.next() #whitespace
-            line = lines_iter.next() #officer
-            line = lines_iter.next() #activity
-            line = lines_iter.next() #location etc.
-
-            buff = []
-            buff.insert(0, lines_iter.next())
-            buff.insert(0, lines_iter.next())
-
-            #find the next empty line, then send the previous two lines to Location
-            #this is because there is an optional line preceding them if the ship is orbiting something
-            while True:
-                buff.insert(0, lines_iter.next())
-                if buff[0][0] == "\r" or buff[0][0] == "\n":
-                    systems[-1].location = Location(buff[-1], buff[-2])
-                    break
+                self.section = 'body'
+                self.system.bodies.append(Body())
+                self.system.bodies[-1].name = data
+        elif self.entering_header:
+            self.header = data
+            if self.section == 'wormholes':
+                #a new wormhole
+                self.system.wormholes.append(Wormhole())
+                self.system.wormholes[-1].source = self.system.location
+            elif self.section == 'body':
+                if self.header == 'Primary':
+                    pass
+                if self.header.split()[0] == 'Orbiting':
+                    #self.system.bodies[-1].orbits = data
+                    #unicode issues, so skip the degrees
+                    self.system.bodies[-1].orbits = ' '.join(data.split()[0:-1])
+        else:
+            #here is where we process the raw non-header content
+            if self.section == 'init':
+                #just started processing the file, will encounter timestamp and officer babble
+                if re.match('^UTC:[0-9a-fA-F]+$', data):
+                    self.system = System()
+                    self.system.date = datetime.datetime.fromtimestamp(int(data[4:], 16))
+                elif re.match('.*\([0-9,. \-]+\)', data) and self.tmp_system == None:
+                    self.tmp_system = data
+                elif re.match('.*\([0-9,. \-]+\)$', data) and self.tmp_sector == None:
+                    self.tmp_sector = data
+                    self.system.location = Location(self.tmp_system, self.tmp_sector)
+                    self.tmp_system = None
+                    self.tmp_sector = None
+            if self.section == 'wormholes':
+                #we're inside the list of wormholes
+                #figure out which line this is
+                #TODO:  Potential issue if somebody names their empire like 'Charted by (1, 2, 3)' or so
+                if re.match('^(Positive|Negative) Wormhole$', data):
+                    self.system.wormholes[-1].polarity = data.split()[0]
+                elif re.match('.*\([0-9,. \-]+\)$', data) and self.tmp_system == None:
+                    self.tmp_system = data
+                elif re.match('.*\([0-9,. \-]+\)$', data) and self.tmp_sector == None:
+                    self.tmp_sector = data
+                    self.system.wormholes[-1].dest = Location(self.tmp_system, self.tmp_sector)
+                    self.tmp_system = None
+                    self.tmp_sector = None
                 else:
-                    buff.pop()
+                    #don't give a flip who charted it
+                    pass
+            if self.section == 'body':
+                words = data.split()
 
-            lines_iter.next()
-            lines_iter.next()
+                if self.header == 'Primary' or self.header.split()[0] == 'Orbiting':
+                    if words[0] == 'Type':
+                        self.system.bodies[-1].body_kind = 'star'
+                        self.system.bodies[-1].set_zones(1)
+                        self.system.bodies[-1].star_type = ' '.join(words[1:])
+                    elif words[0] == 'Spectral':
+                        self.system.bodies[-1].spectral_class = words[2]
+                    elif words[0] == 'Size':
+                        self.system.bodies[-1].star_size = ' '.join(words[1:])
+                    elif self.system.bodies[-1].body_kind != 'star':
+                        self.system.bodies[-1].orbit_zone = data
 
-            # Wormholes
-            lines_iter.next()
-            line = lines_iter.next()
-            while line:
-                if line[0] == "\r" or line[0] == "\n":
-                    break
-                w = Wormhole()
-                w.polarity = lines_iter.next().split()[0]
-                w.source = systems[-1].location
-                w.dest = Location(lines_iter.next(), lines_iter.next())
-                systems[-1].wormholes.append(w)
-                lines_iter.next()
-                line = lines_iter.next()
-            mode = 'name'
-            continue
-        
-
-        if line[0] == "\r" or line[0] == "\n":
-            # body definition finished, move on
-            mode = 'name'
-            continue
-        elif mode == 'name':
-            # new body
-            systems[-1].bodies.append(Body())
-            systems[-1].bodies[-1].name = line.strip()
-            mode = None
-            continue
-
-        # if found new section, update mode
-        if line[0] != ' ':
-            first_word = line.split()[0]
-            if first_word == 'Primary':
-                mode = 'Orbiting'
-            elif first_word == 'Orbiting':
-                #systems[-1].bodies[-1].orbits = line.strip()
-                #UTF issues, so skip the degrees
-                systems[-1].bodies[-1].orbits = ' '.join(line.split()[0:-1])
-                mode = first_word
-            else:
-                mode = first_word
-            continue
-            
-        # process the section
-        words = line.split()
-        if mode == 'Orbiting':
-            if words[0] == 'Type':
-                systems[-1].bodies[-1].body_kind = 'star'
-                systems[-1].bodies[-1].set_zones(1)
-                systems[-1].bodies[-1].star_type = ' '.join(words[1:])
-            elif words[0] == 'Spectral':
-                systems[-1].bodies[-1].spectral_class = words[2]
-            elif words[0] == 'Size':
-                systems[-1].bodies[-1].star_size = ' '.join(words[1:])
-            elif systems[-1].bodies[-1].body_kind != 'star':
-                systems[-1].bodies[-1].orbit_zone = line.strip()
-        elif mode == 'Photosphere':
-            if words[-1] == 'Diameter':
-                systems[-1].bodies[-1].diameter = words[-2]
-            elif words[0] == 'Type':
-                systems[-1].bodies[-1].add_global_resource(Resource(' '.join(words[0:3]), words[3], words[4]))
-            else:
-                resource_name = get_resource_name_from_line(line)
-                if words[-1] != 'None':
-                    systems[-1].bodies[-1].add_global_resource(Resource(resource_name, words[-2], words[-1]))
-        elif mode == 'Geosphere':
-            if words[-1] == 'Diameter':
-                systems[-1].bodies[-1].diameter = words[-2]
-                systems[-1].bodies[-1].body_kind = line.split(', ')[0].strip()
-            elif words[-1] == 'Radius':
-                systems[-1].bodies[-1].diameter = str(int(words[-2].strip('m'))*2)+'m'
-                systems[-1].bodies[-1].body_kind = line.split(', ')[0].strip()
-            else:
-                resource_name = get_resource_name_from_line(line)
-                zones = line.split(', ')
-                num_zones = len(zones)
-                for z in range(num_zones):
-                    a = zones[z].split()
-                    if a[-1] != 'None':
-                        systems[-1].bodies[-1].add_zone_resource(z, Resource(resource_name, a[-2], a[-1]))
-        elif mode == 'Hydrosphere' or mode == 'Atmosphere':
-            if words[0] == 'No' or words[0][-1] == '%' or words[-1] == 'Density':
-                pass
-            else:
-                resource_name = get_resource_name_from_line(line)
-                if words[-1] != 'None':
-                    systems[-1].bodies[-1].add_global_resource(Resource(resource_name, words[-2], words[-1]))
-        elif mode == 'Biosphere':
-            resource_name = get_resource_name_from_line(line)
-            zones = line.split(', ')
-            num_zones = len(zones)
-            for z in range(num_zones):
-                a = zones[z].split()
-                if a[-1] != 'None':
-                    systems[-1].bodies[-1].add_zone_resource(z, Resource(resource_name, a[-1], '100%'))
-
-    s.close()
-
-    return systems
+                if self.header == 'Photosphere':
+                    if words[-1] == 'Diameter':
+                        self.system.bodies[-1].diameter = words[-2]
+                    elif words[0] == 'Type':
+                        self.system.bodies[-1].add_global_resource(Resource(' '.join(words[0:3]), words[3], words[4]))
+                    else:
+                        resource_name = get_resource_name_from_line(data)
+                        if words[-1] != 'None':
+                            self.system.bodies[-1].add_global_resource(Resource(resource_name, words[-2], words[-1]))
+                elif self.header == 'Geosphere':
+                    if words[-1] == 'Diameter':
+                        self.system.bodies[-1].diameter = words[-2]
+                        self.system.bodies[-1].body_kind = data.split(', ')[0].strip()
+                    elif words[-1] == 'Radius':
+                        self.system.bodies[-1].diameter = str(int(words[-2].strip('m'))*2)+'m'
+                        self.system.bodies[-1].body_kind = data.split(', ')[0].strip()
+                    else:
+                        resource_name = get_resource_name_from_line(data)
+                        zones = data.split(', ')
+                        num_zones = len(zones)
+                        for z in range(num_zones):
+                            a = zones[z].split()
+                            if a[-1] != 'None':
+                                self.system.bodies[-1].add_zone_resource(z, Resource(resource_name, a[-2], a[-1]))
+                elif self.header == 'Hydrosphere' or self.header == 'Atmosphere':
+                    if words[0] == 'No' or words[0][-1] == '%' or words[-1] == 'Density':
+                        pass
+                    else:
+                        resource_name = get_resource_name_from_line(data)
+                        if words[-1] != 'None':
+                            self.system.bodies[-1].add_global_resource(Resource(resource_name, words[-2], words[-1]))
+                elif self.header == 'Biosphere':
+                    resource_name = get_resource_name_from_line(data)
+                    zones = data.split(', ')
+                    num_zones = len(zones)
+                    for z in range(num_zones):
+                        a = zones[z].split()
+                        if a[-1] != 'None':
+                            self.system.bodies[-1].add_zone_resource(z, Resource(resource_name, a[-1], '100%'))
 

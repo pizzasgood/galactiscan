@@ -193,15 +193,18 @@ def delete_survey(survey_id):
 
 def add_text(text):
     """
+    THIS IS NO LONGER SUPPORTED
+
     Add the surveys in the text to the database.
 
     Returns total number of surveys added.
     """
-    create_tables()
-    surveys = survey.process_survey(text)
-    for s in surveys:
-        save_survey(s)
-    return len(surveys)
+    #create_tables()
+    #surveys = survey.process_survey(text)
+    #for s in surveys:
+    #    save_survey(s)
+    #return len(surveys)
+    return 0
 
 
 def add_files(files):
