@@ -172,6 +172,7 @@ class Coords:
 def process_survey_file(filename):
     """Processes survey file 'filename'."""
     if filename is not None:
+        #extract the body of the mail
         encoding = 'utf_16_be'
         f = open(filename, 'rb')
         unknown1 = f.read(18)
@@ -183,6 +184,13 @@ def process_survey_file(filename):
         body_size = int(f.read(4).encode('hex'), 16)
         body = f.read(body_size).decode(encoding)
         f.close()
+
+        #verify that this is in fact a System Survey
+        #TODO:  support planet surveys too
+        if not re.match('^System Survey', title):
+            return ([])
+
+        #parse it
         parser = SurveyHTMLParser()
         parser.feed(body)
         parser.close()
