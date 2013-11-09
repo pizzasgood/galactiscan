@@ -216,6 +216,7 @@ def add_files(files):
     count = 0
     create_tables()
     for f in files:
+        print("Processing file: " + f)
         surveys = survey.process_survey_file(f)
         for s in surveys:
             save_survey(s)
