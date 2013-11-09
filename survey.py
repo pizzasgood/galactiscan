@@ -314,7 +314,7 @@ class SurveyHTMLParser(HTMLParser):
                         self.system.bodies[-1].diameter = words[-2]
                         self.system.bodies[-1].body_kind = data.split(', ')[0].strip()
                     elif words[-1] == 'Radius':
-                        self.system.bodies[-1].diameter = str(int(words[-2].strip('m'))*2)+'m'
+                        self.system.bodies[-1].diameter = str(int(words[-2].strip('Lm').replace(',',''))*2)+'m'
                         self.system.bodies[-1].body_kind = data.split(', ')[0].strip()
                     else:
                         resource_name = get_resource_name_from_line(data)
