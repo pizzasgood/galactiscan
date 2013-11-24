@@ -69,7 +69,7 @@ if len(sys.argv) > 1:
                 rows = data.find_resources(name=sys.argv[i+2], mintl=sys.argv[i+1])
                 i+=2
             else:
-                rows = data.find_resources(name=sys.argv[i+1])
+                rows = data.find_resources(mintl=sys.argv[i+1])
                 i+=1
             data.display_rows(rows)
             exit(0)
