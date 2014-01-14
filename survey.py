@@ -63,7 +63,9 @@ class Body:
         for i in range(num):
             self.zones.append(Zone())
     def add_global_resource(self, r):
-        #warning: make sure all zones are created before this is used
+        #warning: make sure all zones are created before this is used, or only zone 1 will be populated
+        if len(self.zones) == 0:
+            self.zones.append(Zone())
         for z in self.zones:
             z.add_resource(r)
     def add_zone_resource(self, z, r):
