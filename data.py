@@ -247,7 +247,7 @@ def is_number(x):
     return True
 
 
-def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None,centerx=None,centery=None,centerz=None,radius=None):
+def find_resources(name=None,exactname=None,mintl=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None,centerx=None,centery=None,centerz=None,radius=None):
     """Find resources matching parameters and return as list of dictionaries."""
     query = """SELECT resources.name,
                       resources.tl,
@@ -272,6 +272,10 @@ def find_resources(name=None,mintl=None,planet=None,system=None,sector=None,mins
         name = "%%%s%%" % name
         conditions.append("resources.name like ?")
         parameters.append(name)
+    if exactname != None and exactname != '':
+        exactname = "%s" % exactname
+        conditions.append("resources.name like ?")
+        parameters.append(exactname)
     if planet != None and planet != '':
         planet = "%%%s%%" % planet
         conditions.append("bodies.name like ?")
