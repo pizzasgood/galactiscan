@@ -235,6 +235,7 @@ class SurveyHTMLParser(HTMLParser):
     def handle_data(self, data):
         data = data.strip()
         if self.entering_section_header:
+            self.header = ''
             self.section_header = data
             if data == 'Wormholes':
                 self.section = 'wormholes'
@@ -288,7 +289,7 @@ class SurveyHTMLParser(HTMLParser):
             if self.section == 'body':
                 words = data.split()
 
-                if self.header == 'Primary' or self.header.split()[0] == 'Orbiting':
+                if self.header == 'Primary' or (self.header != "" and self.header.split()[0] == 'Orbiting'):
                     if words[0] == 'Type':
                         self.system.bodies[-1].body_kind = 'star'
                         self.system.bodies[-1].set_zones(1)
