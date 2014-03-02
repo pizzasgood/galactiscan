@@ -1,7 +1,7 @@
 Galactiscan
 ===========
 
-A tool for maintaining and querying a database of survey scans from [Shores of Hazeron](http://www.hazeron.com/).
+An unofficial tool for maintaining and querying a database of survey scans from [Shores of Hazeron](http://www.hazeron.com/).
 
 
 
@@ -26,18 +26,20 @@ Installation
 
 You don't install Galactiscan, currently.  Just check out the repository, stick it wherever, and run galactiscan.py using python2.  You'll need to go to "File -> Define DB" the first time you run it, and select a location to save the database file (which is a generic sqlite3 database, fyi).  Your choice will be remembered and used automatically from then on.  Otherwise it will just use 'database.sqlite3' in the local directory, which may not be what you want.
 
-Someday it will have an optional installer, but that is low priority right now.
+You may need to also go to "File -> Define Mail Cache" to tell it where your Hazeron mail cache is (or if you want to point it somewhere else, so that you can manually manage which survey reports it reads).  It will default to "~/Shores of Hazeron/Mail".
+
+Someday there will be an optional installer, but that is low priority right now.
 
 
 
 Adding Data
 -----------
 
-You can add data in a few ways.  The simplest is to copy the survey report right out of the game, and then click the "Paste" toolbar button on Galactiscan.  You can also use the "Add" button to load data directly out of a text file.  Note that you can add multiple files in one go, by holding the Ctrl key while selecting them.  Galactiscan will also happily load files that contain multiple concatinated reports.  Finally, you can add files from the commandline, like so:
+You add data to Galactiscan by ensuring it has the correct location for your mail cache, and then clicking the "Refresh" button on the toolbar.  It will peruse that directory and process any Survey Scan reports that it has not already processed.  You can also use the "Add" button to load specific mail files (e.g. that an ally has sent you outside of the game).  Passing it filenames on the commandline also works:
 
-`./galactiscan.py /path/to/some/file.txt /path/to/other/file.txt`
+`./galactiscan.py /path/to/some/file.m /path/to/some/otherfile.m`
 
-The data will be saved in an sqlite3 database at whatever location you defined, and automatically loaded from then on.  If you want to switch databases on the fly, just go to "File -> Define DB" and select a new one.  The old database will be unloaded and the new one loaded.  If you define a file that doesn't exist, an empty one will be created.
+The data will be saved in an sqlite3 database at whatever location you defined for the database, and automatically loaded from then on.  If you want to switch databases on the fly, just go to "File -> Define DB" and select a new one.  The old database will be unloaded and the new one loaded.  If you define a file that doesn't exist, an empty one will be created.
 
 You can delete everything in the database by using the "File -> Clear" option.  There is no undo yet, so please be careful.
 
@@ -63,3 +65,5 @@ Trying to load text that isn't a survey report can cause an error.
 Doing a query that pulls up thousands of results can be slow.
 
 It may be possible to give sectors, systems, or worlds malicious names that will make them be processed incorrectly, potentially even ovewriting valid data.  So, backup your database from time to time.  (You should do that anyway.)
+
+Multiple galaxies are not yet supported; surveys offer no means to identify the galaxy they came from.
