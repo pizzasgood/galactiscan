@@ -4,6 +4,7 @@ import wx
 import survey
 import sqlite3
 import datetime, time
+import os.path
 import tabulation
 
 def adapt_datetime(ts):
@@ -22,6 +23,15 @@ def get_database_path():
 def set_database_path(database_path):
     wx.Config.Get().Write('/database/name', database_path)
 
+def get_mailcache_path():
+    mailcache_path = os.path.expanduser('~/Shores of Hazeron/Mail')
+    if wx.Config.Get().HasEntry('/mailcache/path'):
+        mailcache_path = wx.Config.Get().Read('/mailcache/path')
+    return mailcache_path
+
+def set_mailcache_path(mailcache_path):
+    wx.Config.Get().Write('/mailcache/path', mailcache_path)
+
 def get_con():
     """Get connection to database."""
     con = sqlite3.connect(get_database_path())
@@ -33,7 +43,7 @@ def drop_tables():
     """Drop all tables if they exist."""
 
     con = get_con()
-    for t in [ 'surveys', 'wormholes', 'bodies', 'resources' ]:
+    for t in [ 'raws', 'surveys', 'wormholes', 'bodies', 'resources' ]:
         con.execute("drop table if exists %s" % t)
     con.commit()
     con.close()
@@ -43,6 +53,11 @@ def create_tables():
     """Create the tables in the database if needed."""
 
     con = get_con()
+
+    con.execute("""create table if not exists raws (
+                    filename    text,
+                    data        blob
+                    )""")
 
     con.execute("""create table if not exists surveys (
                     survey_date date,
@@ -93,13 +108,20 @@ def create_tables():
     con.close()
 
 
-def save_survey(system):
+def save_survey(system, filename):
     """Save a survey.system to the database."""
 
     con = get_con()
     cur = con.cursor()
 
+    #add the raw file itself to the DB
+    f = open(filename, 'rb')
+    data = f.read()
+    f.close()
+    cur.execute("insert into raws values (?,?)", (os.path.basename(filename), buffer(data)))
+
     #find out if there is already an entry for this system
+    #TODO: do this while initially processing the file, to skip processing old ones
     cur.execute("""SELECT ROWID,
                           survey_date
                    FROM surveys
@@ -109,6 +131,7 @@ def save_survey(system):
     for row in rows:
         if system.date < datetime.datetime.fromtimestamp(row[1]):
             #the "new" survey is out of date, so skip it
+            con.commit()
             con.close()
             return
         else:
@@ -207,6 +230,38 @@ def add_text(text):
     return 0
 
 
+def is_new_file(path):
+    """Returns True if filename pointed to by path is not already in the database."""
+    query = "SELECT filename FROM raws WHERE filename = ?"
+    con = get_con()
+    cur = con.cursor()
+    cur.execute(query, (os.path.basename(path),))
+    rows = cur.fetchall()
+    con.close()
+
+    return len(rows) == 0
+
+def add_files_from_mailcache(mailcache_path):
+    """
+    Add any surveys found in the mailcache to the database.
+
+    Returns total number of surveys added.
+    """
+    count = 0
+    create_tables()
+    for filename in os.listdir(mailcache_path):
+        f = "%s/%s" % (mailcache_path, filename)
+        if os.path.isfile(f):
+            if survey.is_survey_file(f) and is_new_file(f):
+                print("Processing file: " + f)
+                surveys = survey.process_survey_file(f)
+                for s in surveys:
+                    save_survey(s, f)
+                count += len(surveys)
+    return count
+
+
+
 def add_files(files):
     """
     Add the surveys in the array of files to the database.
@@ -219,7 +274,7 @@ def add_files(files):
         print("Processing file: " + f)
         surveys = survey.process_survey_file(f)
         for s in surveys:
-            save_survey(s)
+            save_survey(s, f)
         count += len(surveys)
     return count
 

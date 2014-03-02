@@ -169,6 +169,27 @@ class Coords:
         return s[lparen+1 : rparen]
 
 
+def is_survey_file(filename):
+    """Return True if 'filename' is a survey file."""
+    if filename is not None:
+        #extract the body of the mail
+        encoding = 'utf_16_be'
+        f = open(filename, 'rb')
+        unknown1 = f.read(15)
+        sender_size = int(f.read(4).encode('hex'), 16)
+        sender = f.read(sender_size).decode(encoding)
+        unknown2 = f.read(10)
+        title_size = int(f.read(4).encode('hex'), 16)
+        title = f.read(title_size).decode(encoding)
+        f.close()
+
+        #verify that this is in fact a System Survey
+        #TODO:  support planet surveys too
+        if not re.match('^System Survey', title):
+            return False
+
+        return True
+
 def process_survey_file(filename):
     """Processes survey file 'filename'."""
     if filename is not None:
