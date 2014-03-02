@@ -111,14 +111,16 @@ def create_tables():
 def save_survey(system, filename):
     """Save a survey.system to the database."""
 
+    def add_raw_file(filename, con, cur):
+        #add the raw file itself to the DB
+        f = open(filename, 'rb')
+        data = f.read()
+        f.close()
+        cur.execute("insert into raws values (?,?)", (os.path.basename(filename), buffer(data)))
+
+
     con = get_con()
     cur = con.cursor()
-
-    #add the raw file itself to the DB
-    f = open(filename, 'rb')
-    data = f.read()
-    f.close()
-    cur.execute("insert into raws values (?,?)", (os.path.basename(filename), buffer(data)))
 
     #find out if there is already an entry for this system
     #TODO: do this while initially processing the file, to skip processing old ones
@@ -131,12 +133,15 @@ def save_survey(system, filename):
     for row in rows:
         if system.date < datetime.datetime.fromtimestamp(row[1]):
             #the "new" survey is out of date, so skip it
+            add_raw_file(filename, con, cur) #make sure we record this one to avoid re-parsing it later
             con.commit()
             con.close()
             return
         else:
             #delete the old survey before we add the new one
             delete_survey(row[0])
+
+    add_raw_file(filename, con, cur)
 
     #add the survey
     cur.execute("insert into surveys values (?,?,?,?,?,?,?,?,?,?,?,?)", (
