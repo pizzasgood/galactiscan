@@ -333,7 +333,6 @@ def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,planet=N
         conditions.append("resources.name like ?")
         parameters.append(name)
     if exactname != None and exactname != '':
-        exactname = "%s" % exactname
         conditions.append("resources.name like ?")
         parameters.append(exactname)
     if type(orbit_zones) is list and len(orbit_zones) > 0:
