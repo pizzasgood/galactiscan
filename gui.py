@@ -332,6 +332,8 @@ class Galactiscan(wx.Frame):
         self.InitUI()
 
     def OnSearch(self, e):
+        self.status.SetStatusText("Searching...")
+
         name = self.search_controls.name_field.GetValue()
         tl = self.search_controls.tl_field.GetValue()
         planet = self.search_controls.planet_field.GetValue()
