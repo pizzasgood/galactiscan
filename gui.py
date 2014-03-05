@@ -23,6 +23,15 @@ orbit_zones = [
     'Frigid Zone',
     ]
 
+body_kinds = [
+    'Ringworld',
+    'Planet',
+    'Large Moon',
+    'Moon',
+    'Ring',
+    'Gas Giant',
+    'star',
+    ]
 
 
 class AutoWidthListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
@@ -190,6 +199,8 @@ class SearchControls(wx.BoxSizer):
         self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
         orbit_l = wx.StaticText(parent, label="Orbit Zone:")
         self.orbit_field = wx.ListBox(parent, style=wx.LB_EXTENDED, choices=orbit_zones)
+        body_l = wx.StaticText(parent, label="Body:")
+        self.body_field = wx.ListBox(parent, style=wx.LB_EXTENDED, choices=body_kinds)
         planet_l = wx.StaticText(parent, label="Planet:")
         self.planet_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
         system_l = wx.StaticText(parent, label="System:")
@@ -244,6 +255,7 @@ class SearchControls(wx.BoxSizer):
         hbox1.Add(self.tl_field,     proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(orbit_l,           proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(self.orbit_field,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.body_field,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
         hbox2.Add(planet_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox2.Add(self.planet_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
@@ -296,6 +308,7 @@ class SearchControls(wx.BoxSizer):
         self.name_field.SetValue("")
         self.tl_field.SetValue("")
         self.orbit_field.SetSelection(wx.NOT_FOUND)
+        self.body_field.SetSelection(wx.NOT_FOUND)
         self.planet_field.SetValue("")
         self.system_field.SetValue("")
         self.sector_field.SetValue("")
@@ -335,13 +348,17 @@ class Galactiscan(wx.Frame):
         centerz = self.search_controls.centerz_field.GetValue()
         radius = self.search_controls.radius_field.GetValue()
 
-        orbits = []
-        orbit_indices = self.search_controls.orbit_field.GetSelections()
-        for i in orbit_indices:
-            orbits.append(orbit_zones[i])
+        def values_from_indices(l, indices):
+            ret = []
+            for i in indices:
+                ret.append(l[i])
+            return ret
+
+        orbits = values_from_indices(orbit_zones, self.search_controls.orbit_field.GetSelections())
+        bodies = values_from_indices(body_kinds, self.search_controls.body_field.GetSelections())
 
         if name+tl+planet+system+sector != '':
-            rows = data.find_resources(exactname=name, mintl=tl, orbit_zones=orbits,
+            rows = data.find_resources(exactname=name, mintl=tl, orbit_zones=orbits, body_kinds=bodies,
                                        planet=planet, system=system, sector=sector,
                                        minsecx=minsecx, minsecy=minsecy, minsecz=minsecz,
                                        maxsecx=maxsecx, maxsecy=maxsecy, maxsecz=maxsecz,

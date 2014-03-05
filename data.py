@@ -307,7 +307,7 @@ def is_number(x):
     return True
 
 
-def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None,centerx=None,centery=None,centerz=None,radius=None):
+def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,body_kinds=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None,centerx=None,centery=None,centerz=None,radius=None):
     """Find resources matching parameters and return as list of dictionaries."""
     query = """SELECT resources.name,
                       resources.tl,
@@ -338,6 +338,18 @@ def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,planet=N
     if type(orbit_zones) is list and len(orbit_zones) > 0:
         conditions.append("bodies.orbit_zone in (?%s)" % (",?"*(len(orbit_zones)-1)))
         parameters.extend(orbit_zones)
+    if type(body_kinds) is list and len(body_kinds) > 0:
+        if 'Ringworld' in body_kinds:
+            #Ringworlds actually have the body_kind 'Ringworld Arc #'.  I need to change that when I add versioning and database migration.  Meanwhile, just work around it.
+            if len(body_kinds) == 1:
+                conditions.append("bodies.body_kind like 'Ringworld%'")
+            else:
+                body_kinds.remove('Ringworld')
+                conditions.append("(bodies.body_kind in (?%s) OR bodies.body_kind like 'Ringworld%%')" % (",?"*(len(body_kinds)-1)))
+                parameters.extend(body_kinds)
+        else:
+            conditions.append("bodies.body_kind in (?%s)" % (",?"*(len(body_kinds)-1)))
+            parameters.extend(body_kinds)
     if planet != None and planet != '':
         planet = "%%%s%%" % planet
         conditions.append("bodies.name like ?")
