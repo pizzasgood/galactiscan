@@ -120,8 +120,62 @@ class SearchControls(wx.BoxSizer):
     def __init__(self, parent, grandparent):
         wx.BoxSizer.__init__(self, wx.VERTICAL)
 
+        resources = [
+            'Air',
+            'Animal Carcass',
+            'Antiflux Particles',
+            'Beans',
+            'Bolite',
+            'Borexino Precipitate',
+            'Cheese',
+            'Coal',
+            'Cryozine',
+            'Crystals',
+            'Eggs',
+            'Eludium',
+            'Fertilizer',
+            'Fish',
+            'Fruit',
+            'Gems',
+            'Grain',
+            'Grapes',
+            'Herbs',
+            'Hops',
+            'Hydrogen',
+            'Ice',
+            'Ioplasma',
+            'Log',
+            'Lumenite',
+            'Magmex',
+            'Milk',
+            'Minerals',
+            'Myrathane',
+            'Natural Gas',
+            'Nuts',
+            'Oil',
+            'Ore',
+            'Phlogiston',
+            'Plant Fiber',
+            'Polytaride',
+            'Radioactives',
+            'Spices',
+            'Stone',
+            'Sunlight',
+            'Type A Preons',
+            'Type B Preons',
+            'Type F Preons',
+            'Type G Preons',
+            'Type K Preons',
+            'Type M Preons',
+            'Type O Preons',
+            'Vegetable',
+            'Vegetation Density',
+            'Vulcanite',
+            'Water in the Environment',
+            ]
+
         name_l = wx.StaticText(parent, label="Name:")
-        self.name_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        self.name_field = wx.ComboBox(parent, style=wx.TE_PROCESS_ENTER, choices=resources)
         tl_l = wx.StaticText(parent, label="Min TL:")
         self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
         planet_l = wx.StaticText(parent, label="Planet:")
@@ -266,7 +320,7 @@ class Galactiscan(wx.Frame):
         centerz = self.search_controls.centerz_field.GetValue()
         radius = self.search_controls.radius_field.GetValue()
         if name+tl+planet+system+sector != '':
-            rows = data.find_resources(name=name, mintl=tl,
+            rows = data.find_resources(exactname=name, mintl=tl,
                                        planet=planet, system=system, sector=sector,
                                        minsecx=minsecx, minsecy=minsecy, minsecz=minsecz,
                                        maxsecx=maxsecx, maxsecy=maxsecy, maxsecz=maxsecz,
