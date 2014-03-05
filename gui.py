@@ -16,11 +16,11 @@ import about
 
 
 orbit_zones = [
-    'Frigid Zone',
-    'Habitable Zone',
     'Inferno Zone',
     'Inner Zone',
+    'Habitable Zone',
     'Outer Zone',
+    'Frigid Zone',
     ]
 
 
