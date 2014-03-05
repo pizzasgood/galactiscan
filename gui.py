@@ -121,6 +121,7 @@ class SearchControls(wx.BoxSizer):
         wx.BoxSizer.__init__(self, wx.VERTICAL)
 
         resources = [
+            '',
             'Air',
             'Animal Carcass',
             'Antiflux Particles',
@@ -174,10 +175,21 @@ class SearchControls(wx.BoxSizer):
             'Water in the Environment',
             ]
 
+        orbits = [
+            '',
+            'Frigid Zone',
+            'Habitable Zone',
+            'Inferno Zone',
+            'Inner Zone',
+            'Outer Zone',
+            ]
+
         name_l = wx.StaticText(parent, label="Name:")
         self.name_field = wx.ComboBox(parent, style=wx.TE_PROCESS_ENTER, choices=resources)
         tl_l = wx.StaticText(parent, label="Min TL:")
         self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        orbit_l = wx.StaticText(parent, label="Orbit Zone:")
+        self.orbit_field = wx.ComboBox(parent, style=wx.TE_PROCESS_ENTER, choices=orbits)
         planet_l = wx.StaticText(parent, label="Planet:")
         self.planet_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
         system_l = wx.StaticText(parent, label="System:")
@@ -230,6 +242,8 @@ class SearchControls(wx.BoxSizer):
         hbox1.Add(self.name_field,   proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(tl_l,              proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(self.tl_field,     proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(orbit_l,           proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.orbit_field,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
         hbox2.Add(planet_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox2.Add(self.planet_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
@@ -264,6 +278,7 @@ class SearchControls(wx.BoxSizer):
         grandparent.Bind(wx.EVT_BUTTON, grandparent.OnSearch, id=self.search_button.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.name_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.tl_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.orbit_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.planet_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.system_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.sector_field.GetId())
@@ -281,6 +296,7 @@ class SearchControls(wx.BoxSizer):
     def OnReset(self, e):
         self.name_field.SetValue("")
         self.tl_field.SetValue("")
+        self.orbit_field.SetValue("")
         self.planet_field.SetValue("")
         self.system_field.SetValue("")
         self.sector_field.SetValue("")
@@ -306,6 +322,7 @@ class Galactiscan(wx.Frame):
     def OnSearch(self, e):
         name = self.search_controls.name_field.GetValue()
         tl = self.search_controls.tl_field.GetValue()
+        orbit_zone = self.search_controls.orbit_field.GetValue()
         planet = self.search_controls.planet_field.GetValue()
         system = self.search_controls.system_field.GetValue()
         sector = self.search_controls.sector_field.GetValue()
@@ -320,7 +337,7 @@ class Galactiscan(wx.Frame):
         centerz = self.search_controls.centerz_field.GetValue()
         radius = self.search_controls.radius_field.GetValue()
         if name+tl+planet+system+sector != '':
-            rows = data.find_resources(exactname=name, mintl=tl,
+            rows = data.find_resources(exactname=name, mintl=tl, orbit_zone=orbit_zone,
                                        planet=planet, system=system, sector=sector,
                                        minsecx=minsecx, minsecy=minsecy, minsecz=minsecz,
                                        maxsecx=maxsecx, maxsecy=maxsecy, maxsecz=maxsecz,
