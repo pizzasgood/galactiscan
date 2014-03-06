@@ -139,7 +139,6 @@ class SearchControls(wx.BoxSizer):
         wx.BoxSizer.__init__(self, wx.VERTICAL)
 
         resources = [
-            '',
             'Air',
             'Animal Carcass',
             'Antiflux Particles',
