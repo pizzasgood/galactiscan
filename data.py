@@ -252,6 +252,9 @@ def add_files_from_mailcache(mailcache_path):
 
     Returns total number of surveys added.
     """
+    if not os.path.isdir(mailcache_path):
+        print("Error, no such path: %s" % mailcache_path)
+        return 0
     count = 0
     create_tables()
     for filename in os.listdir(mailcache_path):
