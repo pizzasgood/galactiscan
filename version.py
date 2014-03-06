@@ -4,13 +4,13 @@ import os.path
 
 name = "galactiscan"
 fancy_name = "Galactiscan"
-number = "1.0"
+number = "2.0"
 string = "%s %s" % (name, number)
 fancy_string = "%s %s" % (fancy_name, number)
 description = "A tool for maintaining and querying a database of survey scans from Shores of Hazeron."
 
 url = "https://github.com/pizzasgood/galactiscan"
-copyright = "Copyright (C) 2013  Pizzasgood"
+copyright = "Copyright (C) 2014  Pizzasgood"
 
 license_name = "GPL"
 license_version = "3"
