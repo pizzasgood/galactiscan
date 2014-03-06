@@ -197,9 +197,7 @@ class SearchControls(wx.BoxSizer):
         self.name_field = wx.ComboBox(parent, style=wx.TE_PROCESS_ENTER, choices=resources)
         tl_l = wx.StaticText(parent, label="Min TL:")
         self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
-        orbit_l = wx.StaticText(parent, label="Orbit Zone:")
         self.orbit_field = wx.ListBox(parent, style=wx.LB_EXTENDED, choices=orbit_zones)
-        body_l = wx.StaticText(parent, label="Body:")
         self.body_field = wx.ListBox(parent, style=wx.LB_EXTENDED, choices=body_kinds)
         planet_l = wx.StaticText(parent, label="Planet:")
         self.planet_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
@@ -222,12 +220,18 @@ class SearchControls(wx.BoxSizer):
         radius_l = wx.StaticText(parent, label="Search Radius:")
         self.radius_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
 
-        self.reset_button = wx.Button(parent, label="Reset")
-        self.search_button = wx.Button(parent, label="Search")
+        self.reset_button = wx.Button(parent, id=wx.ID_CLEAR)
+        self.search_button = wx.Button(parent, id=wx.ID_FIND)
 
+        hbox_inputs = wx.BoxSizer(wx.HORIZONTAL)
+        vbox_l = wx.BoxSizer(wx.VERTICAL)
+        vbox_r = wx.BoxSizer(wx.VERTICAL)
+        hbox_bodies = wx.BoxSizer(wx.HORIZONTAL)
+        hbox_buttons = wx.BoxSizer(wx.HORIZONTAL)
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
         hbox2 = wx.BoxSizer(wx.HORIZONTAL)
         hbox3 = wx.BoxSizer(wx.HORIZONTAL)
+        hbox4 = wx.BoxSizer(wx.HORIZONTAL)
         vbox_coords_ls = wx.BoxSizer(wx.VERTICAL)
         vbox_coords = wx.BoxSizer(wx.VERTICAL)
         vbox_radius = wx.BoxSizer(wx.VERTICAL)
@@ -236,26 +240,31 @@ class SearchControls(wx.BoxSizer):
         hbox_center = wx.BoxSizer(wx.HORIZONTAL)
         hbox_radius = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.Add(hbox1, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
-        self.Add(hbox2, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
-        self.Add(hbox3, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+        self.Add(hbox_inputs, proportion=1, flag=wx.EXPAND)
+        hbox_inputs.Add(vbox_l, proportion=1, flag=wx.EXPAND)
+        hbox_inputs.Add(vbox_r, proportion=3, flag=wx.EXPAND)
+
+        vbox_l.Add(hbox1, proportion=0, flag=wx.EXPAND)
+        vbox_l.Add(hbox2, proportion=0, flag=wx.EXPAND)
+        vbox_l.Add(hbox3, proportion=0, flag=wx.EXPAND)
+        vbox_l.Add(hbox4, proportion=1, flag=wx.EXPAND)
+        vbox_r.Add(hbox_bodies, proportion=1, flag=wx.EXPAND)
 
         hbox3.Add(vbox_coords_ls, proportion=0, flag=wx.LEFT, border=5)
         hbox3.Add(vbox_coords,    proportion=1)
         hbox3.Add(vbox_radius,    proportion=2)
 
-        vbox_coords.Add(hbox_minsec, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
-        vbox_coords.Add(hbox_maxsec, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
-        vbox_radius.Add(hbox_center, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
-        vbox_radius.Add(hbox_radius, proportion=0, flag=wx.TOP|wx.BOTTOM|wx.EXPAND)
+        hbox4.Add(hbox_buttons, proportion=0, flag=wx.EXPAND)
+
+        vbox_coords.Add(hbox_minsec, proportion=0, flag=wx.EXPAND)
+        vbox_coords.Add(hbox_maxsec, proportion=0, flag=wx.EXPAND)
+        vbox_radius.Add(hbox_center, proportion=0, flag=wx.EXPAND)
+        vbox_radius.Add(hbox_radius, proportion=0, flag=wx.EXPAND)
 
         hbox1.Add(name_l,            proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(self.name_field,   proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.name_field,   proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(tl_l,              proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(self.tl_field,     proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(orbit_l,           proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(self.orbit_field,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox1.Add(self.body_field,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
         hbox2.Add(planet_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox2.Add(self.planet_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
@@ -264,8 +273,8 @@ class SearchControls(wx.BoxSizer):
         hbox2.Add(sector_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox2.Add(self.sector_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
-        vbox_coords_ls.Add(minsec_l, proportion=1, flag=wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, border=5)
-        vbox_coords_ls.Add(maxsec_l, proportion=1, flag=wx.ALIGN_CENTER|wx.TOP|wx.BOTTOM, border=5)
+        vbox_coords_ls.Add(minsec_l, proportion=1, flag=wx.ALIGN_LEFT|wx.TOP|wx.BOTTOM, border=5)
+        vbox_coords_ls.Add(maxsec_l, proportion=1, flag=wx.ALIGN_LEFT|wx.TOP|wx.BOTTOM, border=5)
 
         hbox_minsec.Add(self.minsecx_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox_minsec.Add(self.minsecy_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
@@ -281,9 +290,13 @@ class SearchControls(wx.BoxSizer):
         hbox_center.Add(self.centerz_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
         hbox_radius.Add(radius_l,           proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox_radius.Add(self.radius_field,  proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox_radius.Add(self.reset_button,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
-        hbox_radius.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_radius.Add(self.radius_field,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        hbox_buttons.Add(self.reset_button,  proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox_buttons.Add(self.search_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+
+        hbox_bodies.Add(self.orbit_field,  proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.EXPAND, border=5)
+        hbox_bodies.Add(self.body_field,  proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT|wx.EXPAND, border=5)
 
         #bind the search controls
         grandparent.Bind(wx.EVT_BUTTON, self.OnReset,  id=self.reset_button.GetId())
