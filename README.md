@@ -64,6 +64,6 @@ Trying to load text that isn't a survey report can cause an error.
 
 Doing a query that pulls up thousands of results can be slow.
 
-It may be possible to give sectors, systems, or worlds malicious names that will make them be processed incorrectly, potentially even ovewriting valid data.  So, backup your database from time to time.  (You should do that anyway.)
+It may be possible to give sectors, systems, or worlds malicious names that will make them be processed incorrectly, potentially even overwriting valid data.  So, backup your database from time to time.  (You should do that anyway.)
 
 Multiple galaxies are not yet supported; surveys offer no means to identify the galaxy they came from.
