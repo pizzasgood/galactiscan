@@ -417,7 +417,7 @@ class Galactiscan(wx.Frame):
             count = data.add_files(paths)
             self.status.SetStatusText("%s surveys added" % count)
         else:
-            self.status.SetStatusText("no surveys added")
+            self.status.SetStatusText("No surveys added")
 
     def Update(self, e):
         mailcache_path = os.path.abspath(data.get_mailcache_path())
@@ -426,7 +426,7 @@ class Galactiscan(wx.Frame):
         if count > 0:
             self.status.SetStatusText("%s surveys added" % count)
         else:
-            self.status.SetStatusText("no surveys added")
+            self.status.SetStatusText("No surveys added")
 
     def ClearDatabase(self, e):
         self.status.SetStatusText("Clearing database...")
