@@ -136,7 +136,7 @@ class Toolbar(wx.BoxSizer):
 
 class SearchControls(wx.BoxSizer):
     def __init__(self, parent, grandparent):
-        wx.BoxSizer.__init__(self, wx.VERTICAL)
+        wx.BoxSizer.__init__(self, wx.HORIZONTAL)
 
         resources = [
             'Air',
@@ -222,7 +222,6 @@ class SearchControls(wx.BoxSizer):
         self.reset_button = wx.Button(parent, id=wx.ID_CLEAR)
         self.search_button = wx.Button(parent, id=wx.ID_FIND)
 
-        hbox_inputs = wx.BoxSizer(wx.HORIZONTAL)
         vbox_l = wx.BoxSizer(wx.VERTICAL)
         vbox_r = wx.BoxSizer(wx.VERTICAL)
         hbox_bodies = wx.BoxSizer(wx.HORIZONTAL)
@@ -239,9 +238,8 @@ class SearchControls(wx.BoxSizer):
         hbox_center = wx.BoxSizer(wx.HORIZONTAL)
         hbox_radius = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.Add(hbox_inputs, proportion=1, flag=wx.EXPAND)
-        hbox_inputs.Add(vbox_l, proportion=1, flag=wx.EXPAND)
-        hbox_inputs.Add(vbox_r, proportion=3, flag=wx.EXPAND)
+        self.Add(vbox_l, proportion=1, flag=wx.EXPAND)
+        self.Add(vbox_r, proportion=3, flag=wx.EXPAND)
 
         vbox_l.Add(hbox1, proportion=0, flag=wx.EXPAND)
         vbox_l.Add(hbox2, proportion=0, flag=wx.EXPAND)
