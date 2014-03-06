@@ -238,8 +238,8 @@ class SearchControls(wx.BoxSizer):
         hbox_center = wx.BoxSizer(wx.HORIZONTAL)
         hbox_radius = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.Add(vbox_l, proportion=1, flag=wx.EXPAND)
-        self.Add(vbox_r, proportion=3, flag=wx.EXPAND)
+        self.Add(vbox_l, proportion=3, flag=wx.EXPAND)
+        self.Add(vbox_r, proportion=1, flag=wx.EXPAND)
 
         vbox_l.Add(hbox1, proportion=0, flag=wx.EXPAND)
         vbox_l.Add(hbox2, proportion=0, flag=wx.EXPAND)
