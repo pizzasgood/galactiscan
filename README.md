@@ -54,7 +54,7 @@ Once you have data stored, you can fill out any relevant fields in the search ar
 
 You can use the "radius" and "center" fields to restrict the search to locations roughly within "radius" sectors of the center point.  Note that it currently cheats and searches a cube rather than a sphere, with side lengths of twice the radius.  This will eventually change.
 
-Note also that all coordinate values in the search fieldw should be in sectors, not parsecs.  This is likely to change eventually, at least for the center/radius fields.
+Note also that all coordinate values in the search fields should be in sectors, not parsecs.  This is likely to change eventually, at least for the center/radius fields.
 
 
 Known Issues
