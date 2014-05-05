@@ -353,7 +353,7 @@ class SurveyHTMLParser(HTMLParser):
                         resource_name = get_resource_name_from_line(data)
                         if words[-1] != 'None':
                             self.system.bodies[-1].add_global_resource(Resource(resource_name, words[-2], words[-1]))
-                elif self.header == 'Biosphere':
+                elif self.header == 'Biosphere' or self.header == 'Biosphere Potential':
                     resource_name = get_resource_name_from_line(data)
                     zones = data.split(', ')
                     num_zones = len(zones)
