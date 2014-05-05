@@ -193,29 +193,39 @@ def is_survey_file(filename):
 def process_survey_file(filename):
     """Processes survey file 'filename'."""
     if filename is not None:
-        #extract the body of the mail
-        encoding = 'utf_16_be'
         f = open(filename, 'rb')
-        unknown1 = f.read(15)
-        sender_size = int(f.read(4).encode('hex'), 16)
-        sender = f.read(sender_size).decode(encoding)
-        unknown2 = f.read(10)
-        title_size = int(f.read(4).encode('hex'), 16)
-        title = f.read(title_size).decode(encoding)
-        body_size = int(f.read(4).encode('hex'), 16)
-        body = f.read(body_size).decode(encoding)
-        f.close()
+        return process_survey_fh(f)
 
-        #verify that this is in fact a System Survey
-        #TODO:  support planet surveys too
-        if not re.match('^System Survey', title):
-            return ([])
+def process_survey_buffer(survey):
+    """Processes raw survey buffer 'survey'."""
+    if survey is not None:
+        f = StringIO.StringIO(survey)
+        return process_survey_fh(f)
 
-        #parse it
-        parser = SurveyHTMLParser()
-        parser.feed(body)
-        parser.close()
-        return ([parser.system])
+def process_survey_fh(f):
+    """Processes survey that file handler 'f' points at."""
+    #extract the body of the mail
+    encoding = 'utf_16_be'
+    unknown1 = f.read(15)
+    sender_size = int(f.read(4).encode('hex'), 16)
+    sender = f.read(sender_size).decode(encoding)
+    unknown2 = f.read(10)
+    title_size = int(f.read(4).encode('hex'), 16)
+    title = f.read(title_size).decode(encoding)
+    body_size = int(f.read(4).encode('hex'), 16)
+    body = f.read(body_size).decode(encoding)
+    f.close()
+
+    #verify that this is in fact a System Survey
+    #TODO:  support planet surveys too
+    if not re.match('^System Survey', title):
+        return ([])
+
+    #parse it
+    parser = SurveyHTMLParser()
+    parser.feed(body)
+    parser.close()
+    return ([parser.system])
 
 
 def get_resource_name_from_line(line):

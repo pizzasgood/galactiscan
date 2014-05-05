@@ -101,6 +101,9 @@ class Menubar(wx.MenuBar):
         fitem = fileMenu.Append(wx.ID_PREFERENCES, 'Define Mail Cache', 'Define Mail Cache')
         parent.Bind(wx.EVT_MENU, parent.DefineMailcache, fitem)
 
+        fitem = fileMenu.Append(wx.ID_REDO, 'Reprocess DB', 'Reprocess Database')
+        parent.Bind(wx.EVT_MENU, parent.ReprocessDatabase, fitem)
+
         fitem = fileMenu.Append(wx.ID_CLEAR, 'Clear DB', 'Clear database')
         parent.Bind(wx.EVT_MENU, parent.ClearDatabase, fitem)
 
@@ -423,6 +426,16 @@ class Galactiscan(wx.Frame):
         mailcache_path = os.path.abspath(data.get_mailcache_path())
         self.status.SetStatusText("Now processing mail cache (%s)..." % mailcache_path)
         count = data.add_files_from_mailcache(mailcache_path)
+        if count > 0:
+            self.status.SetStatusText("%s surveys added" % count)
+        else:
+            self.status.SetStatusText("No surveys added")
+
+    def ReprocessDatabase(self, e):
+        #TODO:  This is very slow; make it asynchronous and add a progress meter.
+        #       Do this for the update function as well.
+        self.status.SetStatusText("Reprocessing database...")
+        count = data.add_files_from_internal_raws()
         if count > 0:
             self.status.SetStatusText("%s surveys added" % count)
         else:

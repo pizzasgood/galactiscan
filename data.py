@@ -108,15 +108,16 @@ def create_tables():
     con.close()
 
 
-def save_survey(system, filename):
+def save_survey(system, filename=None):
     """Save a survey.system to the database."""
 
     def add_raw_file(filename, con, cur):
-        #add the raw file itself to the DB
-        f = open(filename, 'rb')
-        data = f.read()
-        f.close()
-        cur.execute("insert into raws values (?,?)", (os.path.basename(filename), buffer(data)))
+        """Add the raw file itself to the DB."""
+        if filename is not None:
+            f = open(filename, 'rb')
+            data = f.read()
+            f.close()
+            cur.execute("insert into raws values (?,?)", (os.path.basename(filename), buffer(data)))
 
 
     con = get_con()
@@ -266,6 +267,35 @@ def add_files_from_mailcache(mailcache_path):
                 for s in surveys:
                     save_survey(s, f)
                 count += len(surveys)
+    return count
+
+
+
+def add_files_from_internal_raws():
+    """
+    Add any surveys found in the internal raws to the database.
+
+    Returns total number of surveys added.
+    """
+    query = "SELECT filename, data FROM raws"
+    con = get_con()
+    cur = con.cursor()
+    cur.execute(query)
+    rows = cur.fetchall()
+    con.close()
+
+    if len(rows) == 0:
+        print("Error, stored surveys.")
+        return 0
+    count = 0
+    create_tables()
+    for row in rows:
+        f = row[0]
+        print("Processing file: " + f)
+        surveys = survey.process_survey_buffer(row[1])
+        for s in surveys:
+            save_survey(s)
+        count += len(surveys)
     return count
 
 
