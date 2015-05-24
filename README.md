@@ -62,4 +62,3 @@ Known Issues
 
 Doing a query that pulls up thousands of results can be slow.
 
-Multiple galaxies are not yet supported; support is now *possible* though, and will hopefully be completed very soon.

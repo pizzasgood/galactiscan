@@ -70,7 +70,8 @@ def create_tables():
                     sector_y    integer,
                     sector_z    integer,
                     sector_name text,
-                    sector_id   text
+                    sector_id   text,
+                    galaxy_name text
                     )""")
 
     con.execute("""create table if not exists wormholes (
@@ -136,12 +137,13 @@ def save_survey(system, filename=None):
     add_raw_file(filename, con, cur)
 
     #add the survey
-    cur.execute("insert into surveys values (?,?,?,?,?,?,?,?,?,?,?)", (
+    cur.execute("insert into surveys values (?,?,?,?,?,?,?,?,?,?,?,?)", (
             datetime.datetime.now(),
             system.location.system_coords.x, system.location.system_coords.y, system.location.system_coords.z,
             system.location.system_name, str(system.location.universal_coords),
             system.location.sector_coords.x, system.location.sector_coords.y, system.location.sector_coords.z,
             system.location.sector_name, str(system.location.sector_coords),
+            system.galaxy,
             ))
     survey_id = cur.lastrowid
 
@@ -309,7 +311,7 @@ def is_number(x):
     return True
 
 
-def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,body_kinds=None,planet=None,system=None,sector=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None,centerx=None,centery=None,centerz=None,radius=None):
+def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,body_kinds=None,planet=None,system=None,sector=None,galaxy=None,minsecx=None,minsecy=None,minsecz=None,maxsecx=None,maxsecy=None,maxsecz=None,centerx=None,centery=None,centerz=None,radius=None):
     """Find resources matching parameters and return as list of dictionaries."""
     query = """SELECT resources.name,
                       resources.tl,
@@ -319,6 +321,7 @@ def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,body_kin
                       bodies.body_kind,
                       bodies.orbit_zone,
                       resources.zone,
+                      surveys.galaxy_name,
                       surveys.sector_name,
                       surveys.system_name,
                       surveys.system_id,
@@ -364,6 +367,10 @@ def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,body_kin
         sector = "%%%s%%" % sector
         conditions.append("surveys.sector_name like ?")
         parameters.append(sector)
+    if galaxy != None and galaxy != '':
+        galaxy = "%%%s%%" % galaxy
+        conditions.append("surveys.galaxy_name like ?")
+        parameters.append(galaxy)
     if is_int(minsecx):
         conditions.append("surveys.sector_x >= ?")
         parameters.append(minsecx)
@@ -428,6 +435,7 @@ def find_resources(name=None,exactname=None,mintl=None,orbit_zones=None,body_kin
                 'Kind',
                 'Type',
                 'Zone',
+                'Galaxy',
                 'Sector',
                 'System',
                 'Coords',
@@ -482,6 +490,7 @@ def format_as_dict(rows):
                 row['World'],
                 row['System'],
                 row['Sector'],
+                row['Galaxy'],
                 row['Coords'],
                 )
     return ret
@@ -502,6 +511,7 @@ def display_rows(rows):
                 'World',
                 'System',
                 'Sector',
+                'Galaxy',
                 'Coords',
                 ))
 

@@ -15,6 +15,29 @@ import data
 import about
 
 
+galaxy_names = [
+    "Thustra's Eye",
+    "In'Kar Border Region",
+    "Ransuul's Flaming Sword",
+    "Vulcan's Forge",
+    "Crown of Othon",
+    "Heart of Victorus",
+    "House Zanathar",
+    "Seven Ten",
+    "Dyrathon's Retreat",
+    "Fallen Legions of Muturon",
+    "Indigo Sea",
+    "Black Hole",
+    "Core",
+    "Muturon Encounter",
+    "Vreenox Eclipse",
+    "Andrometa Rising",
+    "Falla's Embrace",
+    "Shores of Hazeron",
+    "Veil of Targoss",
+    "Edge of the Rift",
+    ]
+
 orbit_zones = [
     'Inferno Zone',
     'Inner Zone',
@@ -30,7 +53,7 @@ body_kinds = [
     'Moon',
     'Ring',
     'Gas Giant',
-    'star',
+    'Star',
     ]
 
 
@@ -68,7 +91,8 @@ class ResultListCtrl(SortedListCtrl):
         self.InsertColumn(8, 'world', width=140)
         self.InsertColumn(9, 'system', width=140)
         self.InsertColumn(10, 'sector', width=140)
-        self.InsertColumn(11, 'coords', width=80)
+        self.InsertColumn(11, 'galaxy', width=140)
+        self.InsertColumn(12, 'coords', width=80)
 
         #insert the data
         self.InsertData(data)
@@ -193,6 +217,8 @@ class SearchControls(wx.BoxSizer):
         self.name_field = wx.ComboBox(parent, style=wx.TE_PROCESS_ENTER, choices=resources)
         tl_l = wx.StaticText(parent, label="Min TL:")
         self.tl_field = wx.TextCtrl(parent, style=wx.TE_PROCESS_ENTER)
+        galaxy_l = wx.StaticText(parent, label="Galaxy:")
+        self.galaxy_field = wx.ComboBox(parent, style=wx.TE_PROCESS_ENTER, choices=galaxy_names)
         self.orbit_field = wx.ListBox(parent, style=wx.LB_EXTENDED, choices=orbit_zones)
         self.body_field = wx.ListBox(parent, style=wx.LB_EXTENDED, choices=body_kinds)
         planet_l = wx.StaticText(parent, label="Planet:")
@@ -259,6 +285,8 @@ class SearchControls(wx.BoxSizer):
         hbox1.Add(self.name_field,   proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(tl_l,              proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox1.Add(self.tl_field,     proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(galaxy_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
+        hbox1.Add(self.galaxy_field, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
 
         hbox2.Add(planet_l,          proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
         hbox2.Add(self.planet_field, proportion=1, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT, border=5)
@@ -297,6 +325,7 @@ class SearchControls(wx.BoxSizer):
         grandparent.Bind(wx.EVT_BUTTON, grandparent.OnSearch, id=self.search_button.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.name_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.tl_field.GetId())
+        grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.galaxy_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.planet_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.system_field.GetId())
         grandparent.Bind(wx.EVT_TEXT_ENTER, grandparent.OnSearch, id=self.sector_field.GetId())
@@ -314,6 +343,7 @@ class SearchControls(wx.BoxSizer):
     def OnReset(self, e):
         self.name_field.SetValue("")
         self.tl_field.SetValue("")
+        self.galaxy_field.SetValue("")
         self.orbit_field.SetSelection(wx.NOT_FOUND)
         self.body_field.SetSelection(wx.NOT_FOUND)
         self.planet_field.SetValue("")
@@ -343,6 +373,7 @@ class Galactiscan(wx.Frame):
 
         name = self.search_controls.name_field.GetValue()
         tl = self.search_controls.tl_field.GetValue()
+        galaxy = self.search_controls.galaxy_field.GetValue()
         planet = self.search_controls.planet_field.GetValue()
         system = self.search_controls.system_field.GetValue()
         sector = self.search_controls.sector_field.GetValue()
@@ -368,7 +399,7 @@ class Galactiscan(wx.Frame):
 
         if name+tl+planet+system+sector != '':
             rows = data.find_resources(exactname=name, mintl=tl, orbit_zones=orbits, body_kinds=bodies,
-                                       planet=planet, system=system, sector=sector,
+                                       planet=planet, system=system, sector=sector, galaxy=galaxy,
                                        minsecx=minsecx, minsecy=minsecy, minsecz=minsecz,
                                        maxsecx=maxsecx, maxsecy=maxsecy, maxsecz=maxsecz,
                                        centerx=centerx, centery=centery, centerz=centerz,
@@ -487,7 +518,7 @@ class Galactiscan(wx.Frame):
 
         #the main viewing area
         stuff = {
-            0 : ('', '', '', '', '', '', '', '', '', '', '', ''),
+            0 : ('', '', '', '', '', '', '', '', '', '', '', '', ''),
             }
         self.list = ResultListCtrl(panel, stuff)
         main_vbox.Add(self.list, proportion=1, flag=wx.EXPAND)

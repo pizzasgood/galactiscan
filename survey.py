@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 
 class System:
     location = None
+    galaxy = None
 
     def __init__(self):
         self.wormholes = []
@@ -43,7 +44,7 @@ class Body:
         ret = "-------------\n"
         ret += "%s\n" % self.name
         ret += "  %s\n" % self.body_kind
-        if self.body_kind == 'star':
+        if self.body_kind == 'Star':
             ret += "  %s\n" % self.star_type
             ret += "  %s\n" % self.spectral_class
             ret += "  %s\n" % self.star_size
@@ -196,6 +197,7 @@ def process_starmap_fh(f):
             for system in sector.findall('system[@eod="Surveyed"]'):
                 systems.append(System())
                 systems[-1].location = Location(system, sector)
+                systems[-1].galaxy = galaxy.get('name')
                 for wormhole in system.findall('wormhole'):
                     systems[-1].wormholes.append(Wormhole())
                     systems[-1].wormholes[-1].polarity = wormhole.get('polarity')
@@ -204,7 +206,7 @@ def process_starmap_fh(f):
                 for star in system.findall('star'):
                     systems[-1].bodies.append(Body())
                     systems[-1].bodies[-1].name = star.get('name')
-                    systems[-1].bodies[-1].body_kind = 'star'
+                    systems[-1].bodies[-1].body_kind = 'Star'
                     systems[-1].bodies[-1].star_type = star.get('name')[0]
                     systems[-1].bodies[-1].spectral_class = star.get('spectralClass')
                     systems[-1].bodies[-1].star_size = star.get('size')
