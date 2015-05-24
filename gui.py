@@ -98,9 +98,6 @@ class Menubar(wx.MenuBar):
         fitem = fileMenu.Append(wx.ID_OPEN, 'Define DB', 'Define Database')
         parent.Bind(wx.EVT_MENU, parent.DefineDatabase, fitem)
 
-        fitem = fileMenu.Append(wx.ID_PREFERENCES, 'Define Mail Cache', 'Define Mail Cache')
-        parent.Bind(wx.EVT_MENU, parent.DefineMailcache, fitem)
-
         fitem = fileMenu.Append(wx.ID_REDO, 'Reprocess DB', 'Reprocess Database')
         parent.Bind(wx.EVT_MENU, parent.ReprocessDatabase, fitem)
 
@@ -124,15 +121,12 @@ class Toolbar(wx.BoxSizer):
         wx.BoxSizer.__init__(self, wx.HORIZONTAL)
 
         #create the buttons
-        self.update_button = wx.Button(parent, id=wx.ID_REFRESH, style=wx.BU_EXACTFIT)
         self.add_button = wx.Button(parent, id=wx.ID_ADD, style=wx.BU_EXACTFIT)
 
         #add the buttons to the widget
-        self.Add(self.update_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
         self.Add(self.add_button, proportion=0, flag=wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT)
 
         #bind the buttons to actions
-        grandparent.Bind(wx.EVT_BUTTON, grandparent.Update,  id=self.update_button.GetId())
         grandparent.Bind(wx.EVT_BUTTON, grandparent.AddFile,  id=self.add_button.GetId())
 
 
@@ -399,41 +393,26 @@ class Galactiscan(wx.Frame):
         else:
             self.status.SetStatusText("Database unchanged (%s)" % last_path)
 
-    def DefineMailcache(self, e):
-        last_path = os.path.abspath(data.get_mailcache_path())
-        dialog = wx.DirDialog(self, message="Please select the directory you wish to use.",
-                                     style=wx.DD_DIR_MUST_EXIST,
-                                     defaultPath=last_path,
+    def AddFile(self, e):
+        last_path = os.path.abspath(data.get_last_starmap_path())
+        last_dir, last_file = os.path.split(last_path)
+        dialog = wx.FileDialog(self, message="Please select the files you wish to process.",
+                                     style=wx.FD_OPEN|wx.FD_MULTIPLE|wx.FD_FILE_MUST_EXIST,
+                                     defaultDir=last_dir,
+                                     defaultFile=last_file,
+                                     wildcard='XML files (*.xml)|*.xml|All files|*',
                                      )
         if dialog.ShowModal() == wx.ID_OK:
-            path = dialog.GetPath()
-            data.set_mailcache_path(path)
-            self.status.SetStatusText("Mail Cache set to %s" % path)
-        else:
-            self.status.SetStatusText("Mail Cache unchanged (%s)" % last_path)
-
-    def AddFile(self, e):
-        dialog = wx.FileDialog(self, message="Please select the files you wish to process.", style=wx.FD_OPEN|wx.FD_MULTIPLE|wx.FD_FILE_MUST_EXIST)
-        if dialog.ShowModal() == wx.ID_OK:
             paths = dialog.GetPaths()
+            data.set_last_starmap_path(paths[-1])
             self.status.SetStatusText("Now processing %s files..." % len(paths))
             count = data.add_files(paths)
             self.status.SetStatusText("%s surveys added" % count)
         else:
             self.status.SetStatusText("No surveys added")
 
-    def Update(self, e):
-        mailcache_path = os.path.abspath(data.get_mailcache_path())
-        self.status.SetStatusText("Now processing mail cache (%s)..." % mailcache_path)
-        count = data.add_files_from_mailcache(mailcache_path)
-        if count > 0:
-            self.status.SetStatusText("%s surveys added" % count)
-        else:
-            self.status.SetStatusText("No surveys added")
-
     def ReprocessDatabase(self, e):
         #TODO:  This is very slow; make it asynchronous and add a progress meter.
-        #       Do this for the update function as well.
         self.status.SetStatusText("Reprocessing database...")
         count = data.add_files_from_internal_raws()
         if count > 0:

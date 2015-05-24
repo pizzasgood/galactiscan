@@ -14,6 +14,15 @@ sqlite3.register_adapter(datetime.datetime, adapt_datetime)
 
 
 
+def get_last_starmap_path():
+    last_path = os.path.expanduser('~/Shores of Hazeron/Star Map.xml')
+    if wx.Config.Get().HasEntry('/starmaps/last'):
+        last_path = wx.Config.Get().Read('/starmaps/last')
+    return last_path
+
+def set_last_starmap_path(last_path):
+    wx.Config.Get().Write('/starmaps/last', last_path)
+
 def get_database_path():
     database_path = 'database.sqlite3'
     if wx.Config.Get().HasEntry('/database/name'):
@@ -22,15 +31,6 @@ def get_database_path():
 
 def set_database_path(database_path):
     wx.Config.Get().Write('/database/name', database_path)
-
-def get_mailcache_path():
-    mailcache_path = os.path.expanduser('~/Shores of Hazeron/Mail')
-    if wx.Config.Get().HasEntry('/mailcache/path'):
-        mailcache_path = wx.Config.Get().Read('/mailcache/path')
-    return mailcache_path
-
-def set_mailcache_path(mailcache_path):
-    wx.Config.Get().Write('/mailcache/path', mailcache_path)
 
 def get_con():
     """Get connection to database."""
@@ -237,28 +237,6 @@ def is_new_file(path):
     con.close()
 
     return len(rows) == 0
-
-def add_files_from_mailcache(mailcache_path):
-    """
-    Add any surveys found in the mailcache to the database.
-
-    Returns total number of surveys added.
-    """
-    if not os.path.isdir(mailcache_path):
-        print("Error, no such path: %s" % mailcache_path)
-        return 0
-    count = 0
-    create_tables()
-    for filename in os.listdir(mailcache_path):
-        f = "%s/%s" % (mailcache_path, filename)
-        if os.path.isfile(f):
-            if survey.is_starmap_file(f) and is_new_file(f):
-                print("Processing file: " + f)
-                surveys = survey.process_starmap_file(f)
-                for s in surveys:
-                    save_survey(s, f)
-                count += len(surveys)
-    return count
 
 
 
