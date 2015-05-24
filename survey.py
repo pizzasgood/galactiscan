@@ -221,7 +221,11 @@ def process_starmap_fh(f):
                     systems[-1].bodies[-1].orbits = planet.get('orbit')
                     systems[-1].bodies[-1].orbit_zone = planet.get('zone')
                     for geosphere in planet.findall('geosphere'):
-                        systems[-1].bodies[-1].diameter = geosphere.get('diameter').split()[0]
+                        diameter = geosphere.get('diameter')
+                        if diameter.split()[-1] == 'Diameter':
+                            systems[-1].bodies[-1].diameter = diameter.split()[0]
+                        else:
+                            systems[-1].bodies[-1].diameter = str(int(diameter.split()[0].strip('Lm').replace(',',''))*2)+'m'
                         num_zones = int(geosphere.get('resourceZones'))
                         for resource in geosphere.findall('resource'):
                             for z in range(1,num_zones+1):
