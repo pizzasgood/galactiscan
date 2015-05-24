@@ -4,7 +4,7 @@ import math
 import datetime
 import StringIO
 import re
-from HTMLParser import HTMLParser
+import xml.etree.ElementTree as ET
 
 
 class System:
@@ -16,7 +16,6 @@ class System:
 
     def __str__(self):
         ret = str(self.location)
-        ret += '\nScanned on: '+self.date.strftime('%m/%d/%y %I:%M %p')
         for w in self.wormholes:
             ret += '\n' + str(w)
         for b in self.bodies:
@@ -92,8 +91,8 @@ class Zone:
 class Resource:
     def __init__(self, name, quality, prevalence):
         self.name = name
-        self.quality = int(quality.strip('Q'))
-        self.prevalence = int(prevalence.strip('%'))
+        self.quality = int(quality)
+        self.prevalence = int(prevalence)
         self.tl = self.quality/8+1
 
     def __repr__(self):
@@ -105,7 +104,8 @@ class Resource:
 
 class Wormhole:
     def __repr__(self):
-        return "<Wormhole %s from %s to %s>" % (self.polarity, self.source.system_name, self.dest.system_name)
+        #return "<Wormhole %s from %s to %s>" % (self.polarity, self.source.system_name, self.dest.system_name)
+        return "<Wormhole %s from %s to %s>" % (self.polarity, self.source, self.dest)
 
     def __str__(self):
         return "%s wormhole from %s to %s" % (self.polarity, self.source, self.dest)
@@ -113,17 +113,12 @@ class Wormhole:
 
 class Location:
     """Contains names and coordinates of system and sector."""
-    def __init__(self, sys_str, sec_str):
-        self.system_coords = Coords(sys_str)
-        self.sector_coords = Coords(sec_str)
-        self.system_name = sys_str[0:sys_str.rfind('(')].strip()
-        words = self.system_name.split()
-        if words[-1] == 'System':
-            self.system_name = self.system_name[0:self.system_name.rfind('S')].strip()
-        self.sector_name = sec_str[0:sec_str.rfind('S')].strip()
-        if len(self.sector_name) == 0:
-            self.sector_name = sec_str.strip()
-        self.universal_coords = UniversalCoords(self.system_coords, self.sector_coords)
+    def __init__(self, sys_node, sec_node):
+        self.universal_coords = Coords(sys_node) #pc
+        self.sector_coords = Coords(sec_node) #deca-pc
+        self.system_coords = LocalCoords(self.universal_coords, self.sector_coords) #pc rel sector center
+        self.system_name = sys_node.get('name')
+        self.sector_name = sec_node.get('name')
 
     def __repr__(self):
         return "<Location system_name: %s>" % (self.system_name)
@@ -132,15 +127,15 @@ class Location:
         return "%s (%s) in %s (%s)" % (self.system_name, self.system_coords, self.sector_name, self.sector_coords)
 
 
-class UniversalCoords:
-    """Universal coordinates in parsecs."""
-    def __init__(self, system, sector):
-        self.x = system.x + sector.x*10
-        self.y = system.y + sector.y*10
-        self.z = system.z + sector.z*10
+class LocalCoords:
+    """Local coordinates in parsecs, relative to sector center."""
+    def __init__(self, universal, sector):
+        self.x = universal.x - sector.x*10
+        self.y = universal.y - sector.y*10
+        self.z = universal.z - sector.z*10
 
     def __repr__(self):
-        return "<UniversalCoords x:%s y:%s z:%s>" % (self.x, self.y, self.z)
+        return "<LocalCoords x:%s y:%s z:%s>" % (self.x, self.y, self.z)
 
     def __str__(self):
         return "%s %s %s" % (self.x, self.y, self.z)
@@ -148,11 +143,16 @@ class UniversalCoords:
 
 class Coords:
     """Contains xyz coordinates."""
-    def __init__(self, s):
-        c = self.get_coord_part_of_string(s).split(', ')
-        self.x = float(c[0])
-        self.y = float(c[1])
-        self.z = float(c[2])
+    def __init__(self, node):
+        if 'x' in node.keys():
+            self.x = float(node.get('x'))
+            self.y = float(node.get('y'))
+            self.z = float(node.get('z'))
+        else:
+            #wormholes are different
+            self.x = float(node.get('destX'))
+            self.y = float(node.get('destY'))
+            self.z = float(node.get('destZ'))
 
     def __repr__(self):
         return "<Coords x:%s y:%s z:%s>" % (self.x, self.y, self.z)
@@ -160,215 +160,83 @@ class Coords:
     def __str__(self):
         return "%s %s %s" % (self.x, self.y, self.z)
 
-    def get_coord_part_of_string(self, s):
-        """Return the coordinate portion of a string, assuming the coordinates were enclosed in parens."""
-        lparen = s.rfind('(')
-        rparen = s.rfind(')')
-        if rparen < 0:
-            rparen = None
-        return s[lparen+1 : rparen]
 
-
-def is_survey_file(filename):
-    """Return True if 'filename' is a survey file."""
+def is_starmap_file(filename):
+    """Return True if 'filename' is a starmap file."""
     if filename is not None:
-        #extract the body of the mail
-        encoding = 'utf_16_be'
-        f = open(filename, 'rb')
-        unknown1 = f.read(15)
-        sender_size = int(f.read(4).encode('hex'), 16)
-        sender = f.read(sender_size).decode(encoding)
-        unknown2 = f.read(10)
-        title_size = int(f.read(4).encode('hex'), 16)
-        title = f.read(title_size).decode(encoding)
-        f.close()
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        if root.tag == 'starmap':
+            return True
+    return False
 
-        #verify that this is in fact a System Survey
-        #TODO:  support planet surveys too
-        if not re.match('^System Survey', title):
-            return False
-
-        return True
-
-def process_survey_file(filename):
-    """Processes survey file 'filename'."""
+def process_starmap_file(filename):
+    """Processes starmap file 'filename'."""
     if filename is not None:
         f = open(filename, 'rb')
-        return process_survey_fh(f)
+        return process_starmap_fh(f)
 
-def process_survey_buffer(survey):
-    """Processes raw survey buffer 'survey'."""
-    if survey is not None:
-        f = StringIO.StringIO(survey)
-        return process_survey_fh(f)
+def process_starmap_buffer(starmap):
+    """Processes raw starmap buffer 'starmap'."""
+    if starmap is not None:
+        f = StringIO.StringIO(starmap)
+        return process_starmap_fh(f)
 
-def process_survey_fh(f):
-    """Processes survey that file handler 'f' points at."""
-    #extract the body of the mail
-    encoding = 'utf_16_be'
-    unknown1 = f.read(15)
-    sender_size = int(f.read(4).encode('hex'), 16)
-    sender = f.read(sender_size).decode(encoding)
-    unknown2 = f.read(10)
-    title_size = int(f.read(4).encode('hex'), 16)
-    title = f.read(title_size).decode(encoding)
-    body_size = int(f.read(4).encode('hex'), 16)
-    body = f.read(body_size).decode(encoding)
+def process_starmap_fh(f):
+    """Processes starmap that file handler 'f' points at."""
+    raw = f.read()
     f.close()
+    root = ET.fromstring(raw)
 
-    #verify that this is in fact a System Survey
-    #TODO:  support planet surveys too
-    if not re.match('^System Survey', title):
-        return ([])
+    systems = []
 
-    #parse it
-    parser = SurveyHTMLParser()
-    parser.feed(body)
-    parser.close()
-    return ([parser.system])
+    for galaxy in root.findall('galaxy'):
+        #TODO: add galaxy support
+        for sector in galaxy.findall('sector'):
+            for system in sector.findall('system[@eod="Surveyed"]'):
+                systems.append(System())
+                systems[-1].location = Location(system, sector)
+                for wormhole in system.findall('wormhole'):
+                    systems[-1].wormholes.append(Wormhole())
+                    systems[-1].wormholes[-1].polarity = wormhole.get('polarity')
+                    systems[-1].wormholes[-1].source = systems[-1].location
+                    systems[-1].wormholes[-1].dest = systems[-1].location
+                for star in system.findall('star'):
+                    systems[-1].bodies.append(Body())
+                    systems[-1].bodies[-1].name = star.get('name')
+                    systems[-1].bodies[-1].body_kind = 'star'
+                    systems[-1].bodies[-1].star_type = star.get('name')[0]
+                    systems[-1].bodies[-1].spectral_class = star.get('spectralClass')
+                    systems[-1].bodies[-1].star_size = star.get('size')
+                    systems[-1].bodies[-1].diameter = star.get('diameter').split()[0]
+                    if 'orbit' in star.keys():
+                        systems[-1].bodies[-1].orbits = star.get('orbit')
+                    systems[-1].bodies[-1].set_zones(1)
+                    for resource in star.findall('resource'):
+                        systems[-1].bodies[-1].add_global_resource(Resource(resource.get('name'), resource.get('quality'), resource.get('abundance')))
+                for planet in system.findall('planet'):
+                    systems[-1].bodies.append(Body())
+                    systems[-1].bodies[-1].name = planet.get('name')
+                    systems[-1].bodies[-1].body_kind = planet.get('bodyType')
+                    systems[-1].bodies[-1].orbits = planet.get('orbit')
+                    systems[-1].bodies[-1].orbit_zone = planet.get('zone')
+                    for geosphere in planet.findall('geosphere'):
+                        systems[-1].bodies[-1].diameter = geosphere.get('diameter').split()[0]
+                        num_zones = int(geosphere.get('resourceZones'))
+                        for resource in geosphere.findall('resource'):
+                            for z in range(1,num_zones+1):
+                                systems[-1].bodies[-1].add_zone_resource(z-1, Resource(resource.get('name'), resource.get('qualityZone%s' % z), resource.get('abundanceZone%s' % z)))
+                    for hydrosphere in planet.findall('hydrosphere'):
+                        for resource in hydrosphere.findall('resource'):
+                            systems[-1].bodies[-1].add_global_resource(Resource(resource.get('name'), resource.get('qualityZone1'), resource.get('abundanceZone1')))
+                    for atmosphere in planet.findall('atmosphere'):
+                        for resource in atmosphere.findall('resource'):
+                            systems[-1].bodies[-1].add_global_resource(Resource(resource.get('name'), resource.get('qualityZone1'), resource.get('abundanceZone1')))
+                    for biosphere in planet.findall('biosphere'):
+                        for resource in biosphere.findall('resource'):
+                            for z in range(1,num_zones+1):
+                                systems[-1].bodies[-1].add_zone_resource(z-1, Resource(resource.get('name'), resource.get('qualityZone%s' % z), resource.get('abundanceZone%s' % z)))
 
+    return systems
 
-def get_resource_name_from_line(line):
-    n1 = line.split(' Q')[0].strip()
-    n2 = line.split(' None')[0].strip()
-    if len(n1) < len(n2):
-        resource_name = n1
-    else:
-        resource_name = n2
-    return resource_name
-
-
-class SurveyHTMLParser(HTMLParser):
-    """Processes survey html. """
-
-    system = None
-    section = 'init'
-    section_header = ''
-    header = ''
-    entering_section_header = False
-    entering_header = False
-
-    tmp_system = None
-    tmp_sector = None
-
-    def handle_starttag(self, tag, attrs):
-        if tag == 'big':
-            self.entering_section_header = True
-        if tag == 'b':
-            self.entering_header = True
-
-    def handle_endtag(self, tag):
-        if tag == 'big':
-            self.entering_section_header = False
-        if tag == 'b':
-            self.entering_header = False
-
-    def handle_data(self, data):
-        data = data.strip()
-        if self.entering_section_header:
-            self.header = ''
-            self.section_header = data
-            if data == 'Wormholes':
-                self.section = 'wormholes'
-            else:
-                self.section = 'body'
-                self.system.bodies.append(Body())
-                self.system.bodies[-1].name = data
-        elif self.entering_header:
-            self.header = data
-            if self.section == 'wormholes':
-                #a new wormhole
-                self.system.wormholes.append(Wormhole())
-                self.system.wormholes[-1].source = self.system.location
-            elif self.section == 'body':
-                if self.header == 'Primary':
-                    pass
-                if self.header.split()[0] == 'Orbiting':
-                    #self.system.bodies[-1].orbits = data
-                    #unicode issues, so skip the degrees
-                    self.system.bodies[-1].orbits = ' '.join(data.split()[0:-1])
-        else:
-            #here is where we process the raw non-header content
-            if self.section == 'init':
-                #just started processing the file, will encounter timestamp and officer babble
-                if re.match('^UTC:[0-9a-fA-F]+$', data):
-                    self.system = System()
-                    self.system.date = datetime.datetime.fromtimestamp(int(data[4:], 16))
-                elif re.match('.*\([0-9,. \-]+\)', data) and self.tmp_system == None:
-                    self.tmp_system = data
-                elif re.match('.*\([0-9,. \-]+\)$', data) and self.tmp_sector == None:
-                    self.tmp_sector = data
-                    self.system.location = Location(self.tmp_system, self.tmp_sector)
-                    self.tmp_system = None
-                    self.tmp_sector = None
-            if self.section == 'wormholes':
-                #we're inside the list of wormholes
-                #figure out which line this is
-                #TODO:  Potential issue if somebody names their empire like 'Charted by (1, 2, 3)' or so
-                if re.match('^(Positive|Negative) Wormhole$', data):
-                    self.system.wormholes[-1].polarity = data.split()[0]
-                elif re.match('.*\([0-9,. \-]+\)$', data) and self.tmp_system == None:
-                    self.tmp_system = data
-                elif re.match('.*\([0-9,. \-]+\)$', data) and self.tmp_sector == None:
-                    self.tmp_sector = data
-                    self.system.wormholes[-1].dest = Location(self.tmp_system, self.tmp_sector)
-                    self.tmp_system = None
-                    self.tmp_sector = None
-                else:
-                    #don't give a flip who charted it
-                    pass
-            if self.section == 'body':
-                words = data.split()
-
-                if self.header == 'Primary' or (self.header != "" and self.header.split()[0] == 'Orbiting'):
-                    if words[0] == 'Type':
-                        self.system.bodies[-1].body_kind = 'star'
-                        self.system.bodies[-1].set_zones(1)
-                        self.system.bodies[-1].star_type = ' '.join(words[1:])
-                    elif words[0] == 'Spectral':
-                        self.system.bodies[-1].spectral_class = words[2]
-                    elif words[0] == 'Size':
-                        self.system.bodies[-1].star_size = ' '.join(words[1:])
-                    elif self.system.bodies[-1].body_kind != 'star':
-                        self.system.bodies[-1].orbit_zone = data
-
-                if self.header == 'Photosphere':
-                    if words[-1] == 'Diameter':
-                        self.system.bodies[-1].diameter = words[-2]
-                    elif words[0] == 'Type':
-                        self.system.bodies[-1].add_global_resource(Resource(' '.join(words[0:3]), words[3], words[4]))
-                    else:
-                        resource_name = get_resource_name_from_line(data)
-                        if words[-1] != 'None':
-                            self.system.bodies[-1].add_global_resource(Resource(resource_name, words[-2], words[-1]))
-                elif self.header == 'Geosphere':
-                    if words[-1] == 'Diameter':
-                        self.system.bodies[-1].diameter = words[-2]
-                        self.system.bodies[-1].body_kind = data.split(', ')[0].strip()
-                    elif words[-1] == 'Radius':
-                        self.system.bodies[-1].diameter = str(int(words[-2].strip('Lm').replace(',',''))*2)+'m'
-                        self.system.bodies[-1].body_kind = data.split(', ')[0].strip()
-                    else:
-                        resource_name = get_resource_name_from_line(data)
-                        zones = data.split(', ')
-                        num_zones = len(zones)
-                        for z in range(num_zones):
-                            a = zones[z].split()
-                            if a[-1] != 'None':
-                                self.system.bodies[-1].add_zone_resource(z, Resource(resource_name, a[-2], a[-1]))
-                elif self.header == 'Hydrosphere' or self.header == 'Atmosphere':
-                    if words[0] == 'No' or words[0][-1] == '%' or words[-1] == 'Density':
-                        pass
-                    else:
-                        resource_name = get_resource_name_from_line(data)
-                        if words[-1] != 'None':
-                            self.system.bodies[-1].add_global_resource(Resource(resource_name, words[-2], words[-1]))
-                elif self.header == 'Biosphere' or self.header == 'Biosphere Potential':
-                    resource_name = get_resource_name_from_line(data)
-                    zones = data.split(', ')
-                    num_zones = len(zones)
-                    for z in range(num_zones):
-                        a = zones[z].split()
-                        if a[-1] != 'None':
-                            self.system.bodies[-1].add_zone_resource(z, Resource(resource_name, a[-1], '100%'))
 

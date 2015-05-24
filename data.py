@@ -60,7 +60,6 @@ def create_tables():
                     )""")
 
     con.execute("""create table if not exists surveys (
-                    survey_date date,
                     stored_date date,
                     system_x    real,
                     system_y    real,
@@ -125,28 +124,20 @@ def save_survey(system, filename=None):
 
     #find out if there is already an entry for this system
     #TODO: do this while initially processing the file, to skip processing old ones
-    cur.execute("""SELECT ROWID,
-                          survey_date
+    cur.execute("""SELECT ROWID
                    FROM surveys
                    WHERE system_id = ?
                    """, (str(system.location.universal_coords),))
     rows = cur.fetchall()
     for row in rows:
-        if system.date < datetime.datetime.fromtimestamp(row[1]):
-            #the "new" survey is out of date, so skip it
-            add_raw_file(filename, con, cur) #make sure we record this one to avoid re-parsing it later
-            con.commit()
-            con.close()
-            return
-        else:
-            #delete the old survey before we add the new one
-            delete_survey(row[0])
+        #delete the old survey before we add the new one
+        delete_survey(row[0])
 
     add_raw_file(filename, con, cur)
 
     #add the survey
-    cur.execute("insert into surveys values (?,?,?,?,?,?,?,?,?,?,?,?)", (
-            system.date, datetime.datetime.now(),
+    cur.execute("insert into surveys values (?,?,?,?,?,?,?,?,?,?,?)", (
+            datetime.datetime.now(),
             system.location.system_coords.x, system.location.system_coords.y, system.location.system_coords.z,
             system.location.system_name, str(system.location.universal_coords),
             system.location.sector_coords.x, system.location.sector_coords.y, system.location.sector_coords.z,
@@ -261,9 +252,9 @@ def add_files_from_mailcache(mailcache_path):
     for filename in os.listdir(mailcache_path):
         f = "%s/%s" % (mailcache_path, filename)
         if os.path.isfile(f):
-            if survey.is_survey_file(f) and is_new_file(f):
+            if survey.is_starmap_file(f) and is_new_file(f):
                 print("Processing file: " + f)
-                surveys = survey.process_survey_file(f)
+                surveys = survey.process_starmap_file(f)
                 for s in surveys:
                     save_survey(s, f)
                 count += len(surveys)
@@ -292,7 +283,7 @@ def add_files_from_internal_raws():
     for row in rows:
         f = row[0]
         print("Processing file: " + f)
-        surveys = survey.process_survey_buffer(row[1])
+        surveys = survey.process_starmap_buffer(row[1])
         for s in surveys:
             save_survey(s)
         count += len(surveys)
@@ -310,7 +301,7 @@ def add_files(files):
     create_tables()
     for f in files:
         print("Processing file: " + f)
-        surveys = survey.process_survey_file(f)
+        surveys = survey.process_starmap_file(f)
         for s in surveys:
             save_survey(s, f)
         count += len(surveys)
